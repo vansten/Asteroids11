@@ -31,8 +31,6 @@ void Actor::Shutdown()
 
 	if(_mesh)
 	{
-		_mesh->Shutdown();
-		Memory::GetInstance()->Deallocate<Mesh>(_mesh);
 		_mesh = nullptr;
 	}
 

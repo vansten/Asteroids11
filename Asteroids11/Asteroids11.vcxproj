@@ -210,7 +210,6 @@
     <ClCompile Include="Core\Scene.cpp" />
     <ClCompile Include="Rendering\Shader.cpp" />
     <ClCompile Include="Core\Transform.cpp" />
-    <ClCompile Include="Rendering\Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Gameplay\Actor.h" />
@@ -234,7 +233,6 @@
     <ClInclude Include="Core\Scene.h" />
     <ClInclude Include="Rendering\Shader.h" />
     <ClInclude Include="Core\Transform.h" />
-    <ClInclude Include="Rendering\Triangle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

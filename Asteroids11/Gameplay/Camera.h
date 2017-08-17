@@ -32,11 +32,6 @@ protected:
 
 	CameraSettings _settings;
 
-	class Cube* _box;
-	class AudioClip* _clip;
-	glm::vec2 _lastMousePos;
-	bool _spawned;
-
 protected:
 	inline void UpdateViewMatrix()
 	{

@@ -1,9 +1,19 @@
 #include "ResourceManager.h"
 
 #include "Memory.h"
+#include "Rendering/Cube.h"
+
+void ResourceManager::Init()
+{
+	Shader* basicShader = GetShader("Shaders/basicVS.glsl", "Shaders/basicFS.glsl");
+	Mesh* m = NewObject(Cube, 1.0f, basicShader, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	m->Initialize();
+	_meshes.push_back(m);
+}
 
 void ResourceManager::Shutdown()
 {
+	ClearResourcesShutdown(_meshes);
 	ClearResources(_shaders);
 	ClearResources(_audioClips);
 }
@@ -33,7 +43,7 @@ AudioClip* ResourceManager::GetAudioClip(const std::string& wavFileName)
 	std::vector<AudioClip*>::iterator it = _audioClips.begin();
 	for(; it != _audioClips.end(); ++it)
 	{
-		if(wavFileName.compare((*it)->GetWAVFileName()))
+		if(wavFileName.compare((*it)->GetWAVFileName()) == 0)
 		{
 			return (*it);
 		}
@@ -43,4 +53,19 @@ AudioClip* ResourceManager::GetAudioClip(const std::string& wavFileName)
 	ac->Initialize();
 	_audioClips.push_back(ac);
 	return ac;
+}
+
+Mesh* ResourceManager::GetMesh(const std::string& meshName)
+{
+	std::vector<Mesh*>::iterator it = _meshes.begin();
+	for(; it != _meshes.end(); ++it)
+	{
+		if(meshName.compare((*it)->GetName()) == 0)
+		{
+			return (*it);
+		}
+	}
+
+	//Do not create new meshes (since the framework supports only cube, triangle and sphere meshes and they're added to vector during the initialization)
+	return nullptr;
 }

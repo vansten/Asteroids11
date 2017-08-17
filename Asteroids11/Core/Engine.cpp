@@ -21,7 +21,6 @@ Engine::Engine() : _currentScene(nullptr), _graphics(nullptr), _physics(nullptr)
 	_instance = this;
 }
 
-
 Engine::~Engine()
 {
 
@@ -35,6 +34,8 @@ bool Engine::Initialize()
 		printf("Cannot initialize graphics\n");
 		return false;
 	}
+
+	_resourceManager.Init();
 
 	Input::Initialize(_graphics->GetWindow());
 

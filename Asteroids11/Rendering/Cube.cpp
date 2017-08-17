@@ -1,15 +1,16 @@
 #include "Cube.h"
 
 #include "Core/Memory.h"
+#include "Core/ResourceManager.h"
 
 Cube::Cube(float size, Shader* shader, const glm::vec4& color) : Mesh(shader, color), _size(size)
 {
-
+	_name = CUBE;
 }
 
 Cube::Cube(const Cube& cube) : Mesh(cube), _size(cube._size)
 {
-
+	_name = CUBE;
 }
 
 Cube::~Cube()
@@ -20,17 +21,27 @@ Cube::~Cube()
 void Cube::Initialize()
 {
 	_vertexBufferSize = 8;
-	_vertexBufferData = (GLfloat*)Memory::GetInstance()->Allocate(sizeof(GLfloat) * _vertexBufferSize * 3, "GLfloat*", __FILE__, __LINE__);
+	_vertexBufferData = (glm::vec3*)Memory::GetInstance()->Allocate(sizeof(glm::vec3) * _vertexBufferSize, "glm::vec3*", __FILE__, __LINE__);
+	_normalBufferData = (glm::vec3*)Memory::GetInstance()->Allocate(sizeof(glm::vec3) * _vertexBufferSize, "glm::vec3*", __FILE__, __LINE__);
 
 	float hSize = 0.5f * _size;
-	_vertexBufferData[0] = -hSize;	_vertexBufferData[1] = -hSize;	_vertexBufferData[2] = hSize;
-	_vertexBufferData[3] = hSize;	_vertexBufferData[4] = -hSize;	_vertexBufferData[5] = hSize;
-	_vertexBufferData[6] = hSize;	_vertexBufferData[7] = hSize;	_vertexBufferData[8] = hSize;
-	_vertexBufferData[9] = -hSize;	_vertexBufferData[10] = hSize;	_vertexBufferData[11] = hSize;
-	_vertexBufferData[12] = -hSize; _vertexBufferData[13] = -hSize; _vertexBufferData[14] = -hSize;
-	_vertexBufferData[15] = hSize;	_vertexBufferData[16] = -hSize; _vertexBufferData[17] = -hSize;
-	_vertexBufferData[18] = hSize;	_vertexBufferData[19] = hSize;	_vertexBufferData[20] = -hSize;
-	_vertexBufferData[21] = -hSize; _vertexBufferData[22] = hSize;	_vertexBufferData[23] = -hSize;
+	_vertexBufferData[0] = glm::vec3(-hSize, -hSize, hSize);
+	_vertexBufferData[1] = glm::vec3(hSize, -hSize, hSize);
+	_vertexBufferData[2] = glm::vec3(hSize, hSize, hSize);
+	_vertexBufferData[3] = glm::vec3(-hSize, hSize, hSize);
+	_vertexBufferData[4] = glm::vec3(-hSize, -hSize, -hSize);
+	_vertexBufferData[5] = glm::vec3(hSize, -hSize, -hSize);
+	_vertexBufferData[6] = glm::vec3(hSize, hSize, -hSize);
+	_vertexBufferData[7] = glm::vec3(-hSize, hSize, -hSize);
+
+	_normalBufferData[0] = glm::vec3(0.0f, -1.0f, 0.0f);
+	_normalBufferData[1] = glm::vec3(0.0f, -1.0f, 0.0f);
+	_normalBufferData[2] = glm::vec3(0.0f, -1.0f, 0.0f);
+	_normalBufferData[3] = glm::vec3(0.0f, -1.0f, 0.0f);
+	_normalBufferData[4] = glm::vec3(0.0f, -1.0f, 0.0f);
+	_normalBufferData[5] = glm::vec3(0.0f, -1.0f, 0.0f);
+	_normalBufferData[6] = glm::vec3(0.0f, -1.0f, 0.0f);
+	_normalBufferData[7] = glm::vec3(0.0f, -1.0f, 0.0f);
 	
 	_indexBufferSize = 36;
 	_indexBufferData = (GLuint*)Memory::GetInstance()->Allocate(sizeof(GLuint) * _indexBufferSize, "GLuint*", __FILE__, __LINE__);

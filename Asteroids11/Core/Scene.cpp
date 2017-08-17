@@ -1,13 +1,13 @@
 #include "Scene.h"
 
 #include "Engine.h"
+#include "Input.h"
 #include "ResourceManager.h"
 #include "Physics/BoxCollider.h"
 #include "Physics/CapsuleCollider.h"
 #include "Physics/PhysicalBody.h"
 #include "Rendering/Cube.h"
 #include "Rendering/Graphics.h"
-#include "Rendering/Triangle.h"
 
 Scene::Scene()
 {
@@ -21,33 +21,11 @@ Scene::~Scene()
 
 bool Scene::Initialize(ResourceManager& resourceManager)
 {
-	Cube c(1.0f, resourceManager.GetShader("Shaders/screenTriangleVS.glsl", "Shaders/screenTriangleFS.glsl"), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-	c.Initialize();
-	
-	Actor* actor = SpawnActor();
-	actor->SetMesh(c);
-	actor->GetTransform().Translate(0.0f, 0.5f, 0.0f);
-	BoxCollider* boxCollider = NewObject(BoxCollider, actor, true, glm::vec3(c.GetSize()));
-	actor->AddCollider(boxCollider);
-	PhysicalBody* physicalBody = actor->CreateRigidbody(false);
-	physicalBody->SetKinematic(true);
-	
-	actor = SpawnActor();
-	actor->SetMesh(c);
-	actor->GetMesh()->SetColor(glm::vec4(0.12f, 0.65f, 0.32f, 1.0f));
-	actor->GetTransform().SetScale(glm::vec3(50.0f, 0.001f, 50.0f));
-	boxCollider = NewObject(BoxCollider, actor, false, glm::vec3(c.GetSize() * 50.0f, c.GetSize() * 0.001f, c.GetSize() * 50.0f));
-	actor->AddCollider(boxCollider);
-	physicalBody = actor->CreateRigidbody(false);
-	physicalBody->SetKinematic(true);
-	
-	c.Shutdown();
-	
-	_camera = NewObject(Camera, glm::vec3(0.0f, 1.8f, -5.0f), glm::vec3(0.0f, 0.0f, 0.0f), CameraSettings(60.0f, 1024.0f / 768.0f, 0.1f, 100.0f));
-	CapsuleCollider* capsuleCollider = NewObject(CapsuleCollider, actor, false, 1.8f, 0.5f);
-	_camera->AddCollider(capsuleCollider);
-	physicalBody = _camera->CreateRigidbody(true);
-	physicalBody->SetKinematic(true);
+	Actor* ship = SpawnActor();
+	ship->SetMesh(resourceManager.GetMesh(CUBE));
+	ship->GetTransform().SetPosition(glm::vec3(0.0f, 0.0f, -5.0f));
+
+	_camera = NewObject(Camera, glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(glm::half_pi<float>(), 0.0f, 0.0f), CameraSettings(60.0f, 1024.0f / 768.0f, 0.1f, 100.0f));
 	_actors.push_back(_camera);
 
 	return true;
@@ -67,9 +45,13 @@ void Scene::Shutdown()
 
 void Scene::Update(GLfloat deltaTime)
 {
-	for(size_t i = 0; i < _actors.size(); ++i)
+	std::vector<Actor*>::iterator it = _actors.begin();
+	for(; it != _actors.end(); ++it)
 	{
-		_actors[i]->Update(deltaTime);
+		if((*it)->IsEnabled())
+		{
+			(*it)->Update(deltaTime);
+		}
 	}
 }
 
@@ -78,7 +60,10 @@ void Scene::PreSimulate()
 	std::vector<Actor*>::iterator it = _actors.begin();
 	for(; it != _actors.end(); ++it)
 	{
-		(*it)->PreSimulate();
+		if((*it)->IsEnabled())
+		{
+			(*it)->PreSimulate();
+		}
 	}
 }
 
@@ -87,7 +72,10 @@ void Scene::PostSimulate()
 	std::vector<Actor*>::iterator it = _actors.begin();
 	for(; it != _actors.end(); ++it)
 	{
-		(*it)->PostSimulate();
+		if((*it)->IsEnabled())
+		{
+			(*it)->PostSimulate();
+		}
 	}
 }
 
@@ -96,7 +84,10 @@ void Scene::Render(Graphics* graphics)
 	std::vector<Actor*>::iterator it = _actors.begin();
 	for(; it != _actors.end(); ++it)
 	{
-		(*it)->Render(*_camera, graphics);
+		if((*it)->IsEnabled())
+		{
+			(*it)->Render(*_camera, graphics);
+		}
 	}
 }
 

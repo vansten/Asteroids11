@@ -11,8 +11,11 @@ Mesh::Mesh(const Mesh& mesh) : _shader(mesh._shader), _color(mesh._color), _vert
 	Shutdown();
 
 	_vertexBufferSize = mesh._vertexBufferSize;
-	_vertexBufferData = (GLfloat*)Memory::GetInstance()->Allocate(sizeof(GLfloat) * _vertexBufferSize * 3, "GLfloat", __FILE__, __LINE__);
-	memcpy(_vertexBufferData, mesh._vertexBufferData, _vertexBufferSize * 3 * sizeof(GLfloat));
+	_vertexBufferData = (glm::vec3*)Memory::GetInstance()->Allocate(sizeof(glm::vec3) * _vertexBufferSize, "glm::vec3*", __FILE__, __LINE__);
+	memcpy(_vertexBufferData, mesh._vertexBufferData, _vertexBufferSize * sizeof(glm::vec3));
+
+	_normalBufferData = (glm::vec3*)Memory::GetInstance()->Allocate(sizeof(glm::vec3) * _vertexBufferSize, "glm::vec3*", __FILE__, __LINE__);
+	memcpy(_normalBufferData, mesh._normalBufferData, _vertexBufferSize * sizeof(glm::vec3));
 
 	_indexBufferSize = mesh._indexBufferSize;
 	_indexBufferData = (GLuint*)Memory::GetInstance()->Allocate(sizeof(GLfloat) * _indexBufferSize, "GLuint", __FILE__, __LINE__);
@@ -20,7 +23,11 @@ Mesh::Mesh(const Mesh& mesh) : _shader(mesh._shader), _color(mesh._color), _vert
 
 	glGenBuffers(1, &_vertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, _vertexBufferSize * 3 * sizeof(GLfloat), _vertexBufferData, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, _vertexBufferSize * sizeof(glm::vec3), _vertexBufferData, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &_normalBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, _normalBuffer);
+	glBufferData(GL_ARRAY_BUFFER, _vertexBufferSize * sizeof(glm::vec3), _normalBufferData, GL_STATIC_DRAW);
 
 	glGenBuffers(1, &_indexBuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
@@ -36,7 +43,11 @@ void Mesh::Initialize()
 {
 	glGenBuffers(1, &_vertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, _vertexBufferSize * 3 * sizeof(GLfloat), _vertexBufferData, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, _vertexBufferSize * sizeof(glm::vec3), _vertexBufferData, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &_normalBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, _normalBuffer);
+	glBufferData(GL_ARRAY_BUFFER, _vertexBufferSize * sizeof(glm::vec3), _normalBufferData, GL_STATIC_DRAW);
 
 	glGenBuffers(1, &_indexBuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
@@ -54,6 +65,14 @@ void Mesh::Shutdown()
 		glDeleteBuffers(1, &_indexBuffer);
 	}
 
+	if(_normalBufferData)
+	{
+		Memory::GetInstance()->Deallocate(_normalBufferData);
+		_normalBufferData = nullptr;
+
+		glDeleteBuffers(1, &_normalBuffer);
+	}
+
 	if(_vertexBufferData)
 	{
 		Memory::GetInstance()->Deallocate(_vertexBufferData);
@@ -67,5 +86,5 @@ void Mesh::Shutdown()
 void Mesh::Render(const Camera& camera, const glm::mat4& modelMatrix, Graphics* graphics)
 {
 	graphics->SetShader(_shader->GetProgramID());
-	graphics->DrawIndexed(camera, modelMatrix, _color, _vertexBuffer, _indexBuffer, _indexBufferSize);
+	graphics->DrawIndexed(camera, modelMatrix, _color, _vertexBuffer, _indexBuffer, _normalBuffer, _indexBufferSize);
 }

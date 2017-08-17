@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "GL/glew.h"
 #include "glm/glm.hpp"
 #include "GLFW/glfw3.h"
@@ -24,9 +26,11 @@ public:
 
 	void BeginDraw();
 	void EndDraw();
-	void DrawVertexArray(const class Camera& camera, const glm::mat4& modelMatrix, GLuint vertexBufferID, GLsizeiptr vertexBufferSize);
-	void DrawIndexed(const class Camera& camera, const glm::mat4& modelMatrix, const glm::vec4& color, GLuint vertexBuffer, GLuint indexBuffer, GLsizeiptr indicesCount);
+	void DrawVertexArray(const class Camera& camera, const glm::mat4& modelMatrix, GLuint vertexBuffer, GLuint normalBuffer, GLsizeiptr vertexBufferSize);
+	void DrawIndexed(const class Camera& camera, const glm::mat4& modelMatrix, const glm::vec4& color, GLuint vertexBuffer, GLuint indexBuffer, GLuint normalBuffer, GLsizeiptr indicesCount);
 	void SetShader(GLuint id);
+	
+	void SetTitle(const std::string& title);
 
 	inline GLFWwindow* GetWindow() const { return _window; }
 };

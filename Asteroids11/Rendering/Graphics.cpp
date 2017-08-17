@@ -27,7 +27,7 @@ bool Graphics::Initialize()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	_window = glfwCreateWindow(1024, 768, "PhysXFun", nullptr, nullptr);
+	_window = glfwCreateWindow(1024, 768, "Asteroids11", nullptr, nullptr);
 
 	if(!_window)
 	{
@@ -67,33 +67,46 @@ void Graphics::BeginDraw()
 	_lastProgramID = -1;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
 }
 
 void Graphics::EndDraw()
 {
 	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
 	glfwSwapBuffers(_window);
 }
 
-void Graphics::DrawVertexArray(const Camera& camera, const glm::mat4& modelMatrix, GLuint vertexBufferID, GLsizeiptr vertexBufferSize)
+void Graphics::DrawVertexArray(const Camera& camera, const glm::mat4& modelMatrix, GLuint vertexBuffer, GLuint normalBuffer, GLsizeiptr vertexBufferSize)
 {
 	GLuint mvpID = glGetUniformLocation(_lastProgramID, "MVP");
 	glm::mat4 mvp = camera.GetProjectionMatrix() * camera.GetViewMatrix() * modelMatrix;
 	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &mvp[0][0]);
 
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 	glVertexAttribPointer(
 		0,
 		3,
 		GL_FLOAT,
 		GL_FALSE,
+		3,
+		(void*)0
+	);
+
+	glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
+	glVertexAttribPointer(
+		1,
+		3, 
+		GL_FLOAT,
+		GL_FALSE,
 		0,
 		(void*)0
 	);
+	
 	glDrawArrays(GL_TRIANGLES, 0, (GLsizei)vertexBufferSize);
 }
 
-void Graphics::DrawIndexed(const Camera& camera, const glm::mat4& modelMatrix, const glm::vec4& color, GLuint vertexBuffer, GLuint indexBuffer, GLsizeiptr indicesCount)
+void Graphics::DrawIndexed(const Camera& camera, const glm::mat4& modelMatrix, const glm::vec4& color, GLuint vertexBuffer, GLuint indexBuffer, GLuint normalBuffer, GLsizeiptr indicesCount)
 {
 	GLuint mvpID = glGetUniformLocation(_lastProgramID, "MVP");
 	glm::mat4 mvp = camera.GetProjectionMatrix() * camera.GetViewMatrix() * modelMatrix;
@@ -101,6 +114,9 @@ void Graphics::DrawIndexed(const Camera& camera, const glm::mat4& modelMatrix, c
 
 	GLuint colorID = glGetUniformLocation(_lastProgramID, "Color");
 	glUniform4fv(colorID, 1, &color[0]);
+
+	GLuint modelMatrixID = glGetUniformLocation(_lastProgramID, "ModelMatrix");
+	glUniformMatrix4fv(modelMatrixID, 1, GL_FALSE, &modelMatrix[0][0]);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 	glVertexAttribPointer(
@@ -110,7 +126,17 @@ void Graphics::DrawIndexed(const Camera& camera, const glm::mat4& modelMatrix, c
 		GL_FALSE,
 		0,
 		(void*)0
-	); 
+	);
+
+	glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
+	glVertexAttribPointer(
+		1,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		0,
+		(void*)0
+	);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 	glDrawElements(GL_TRIANGLES, (GLsizei) indicesCount, GL_UNSIGNED_INT, (void*)0);
@@ -123,4 +149,9 @@ void Graphics::SetShader(GLuint id)
 		_lastProgramID = id;
 		glUseProgram(id);
 	}
+}
+
+void Graphics::SetTitle(const std::string& title)
+{
+	glfwSetWindowTitle(_window, title.c_str());
 }

@@ -8,7 +8,9 @@ class Mesh
 {
 protected:
 	GLuint _vertexBuffer;
-	GLfloat* _vertexBufferData;
+	GLuint _normalBuffer;
+	glm::vec3* _vertexBufferData;
+	glm::vec3* _normalBufferData;
 	GLsizeiptr _vertexBufferSize;
 
 	GLuint _indexBuffer;
@@ -18,6 +20,8 @@ protected:
 	glm::vec4 _color;
 
 	Shader* _shader;
+
+	std::string _name;
 
 public:
 	Mesh(Shader* shader, const glm::vec4& color);
@@ -37,6 +41,11 @@ public:
 	inline const glm::vec4& GetColor() const
 	{
 		return _color;
+	}
+
+	inline const std::string& GetName()
+	{
+		return _name;
 	}
 };
 

@@ -44,5 +44,6 @@
 *.tlog
 
 *x64/*
+.vs/*
 
 # My regules
