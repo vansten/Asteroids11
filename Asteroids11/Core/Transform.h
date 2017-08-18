@@ -8,6 +8,8 @@
 #include "MathHelper.h"
 #include "Physics/Physics.h"
 
+class Actor;
+
 class Transform
 {
 protected:
@@ -27,22 +29,18 @@ protected:
 
 	glm::mat4 _modelMatrix;
 
+	Actor* _owner;
+	bool _shouldUpdateMatrix;
+
 protected:
-	inline void UpdateModelMatrix()
-	{
-		_modelMatrix = glm::translate(_position) * glm::toMat4(_rotation) * glm::scale(_scale);
-		_forward = glm::vec3(glm::toMat4(_rotation) * glm::vec4(MathHelper::Forward, 0.0f));
-		_right = glm::cross(_forward, MathHelper::Up);
-		_up = glm::cross(_right, _forward);
-		_right = glm::cross(_forward, _up);
-	}
+	void UpdateModelMatrix();
 
 public:
-	Transform(const glm::vec3& position = glm::vec3(0.0f, 0.0f, 0.0f), const glm::quat& rotation = glm::quat(0.0f, 0.0f, 0.0f, 1.0f), const glm::vec3& scale = glm::vec3(1.0f, 1.0f, 1.0f));
+	Transform(Actor* owner, const glm::vec3& position = glm::vec3(0.0f, 0.0f, 0.0f), const glm::quat& rotation = glm::quat(0.0f, 0.0f, 0.0f, 1.0f), const glm::vec3& scale = glm::vec3(1.0f, 1.0f, 1.0f));
 	Transform(const Transform& transform);
 	~Transform();
 
-	inline const glm::mat4& GetModelToWorldMatrix() const
+	inline const glm::mat4& GetModelToWorldMatrix()
 	{
 		return _modelMatrix;
 	}
@@ -85,37 +83,37 @@ public:
 	inline void SetPhysxTransform(const PxTransform& transform)
 	{
 		_physxTransform = transform;
-		UpdateModelMatrix();
+		_shouldUpdateMatrix = true;
 	}
 
 	inline void SetPosition(const glm::vec3& position)
 	{
 		_position = position;
-		UpdateModelMatrix();
+		_shouldUpdateMatrix = true;
 	}
 
 	inline void SetRotation(const glm::quat& rotation)
 	{
 		_rotation = rotation;
-		UpdateModelMatrix();
+		_shouldUpdateMatrix = true;
 	}
 
 	inline void SetRotation(const glm::vec3& rotation)
 	{
 		_rotation = glm::quat(rotation);
-		UpdateModelMatrix();
+		_shouldUpdateMatrix = true;
 	}
 
 	inline void SetScale(const glm::vec3& scale)
 	{
 		_scale = scale;
-		UpdateModelMatrix();
+		_shouldUpdateMatrix = true;
 	}
 
 	inline void Translate(const glm::vec3& translation)
 	{
 		_position += translation;
-		UpdateModelMatrix();
+		_shouldUpdateMatrix = true;
 	}
 
 	inline void Translate(float x = 0.0f, float y = 0.0f, float z = 0.0f)
@@ -123,13 +121,13 @@ public:
 		_position.x += x;
 		_position.y += y;
 		_position.z += z;
-		UpdateModelMatrix();
+		_shouldUpdateMatrix = true;
 	}
 
 	inline void Rotate(const glm::vec3& axis, float angle)
 	{
 		_rotation = glm::rotate(_rotation, angle, axis);
-		UpdateModelMatrix();
+		_shouldUpdateMatrix = true;
 	}
 
 	inline void Rotate(const glm::vec3& angles)
@@ -137,7 +135,7 @@ public:
 		Rotate(MathHelper::Up, angles.y);
 		Rotate(MathHelper::Right, angles.x);
 		Rotate(MathHelper::Forward, angles.z);
-		UpdateModelMatrix();
+		_shouldUpdateMatrix = true;
 	}
 
 	inline void Rotate(float x = 0.0f, float y = 0.0f, float z = 0.0f)
@@ -145,13 +143,13 @@ public:
 		Rotate(MathHelper::Up, y);
 		Rotate(MathHelper::Right, x);
 		Rotate(MathHelper::Forward, z);
-		UpdateModelMatrix();
+		_shouldUpdateMatrix = true;
 	}
 
 	inline void Scale(const glm::vec3& scale)
 	{
 		_scale += scale;
-		UpdateModelMatrix();
+		_shouldUpdateMatrix = true;
 	}
 
 	inline void Scale(float x = 0.0f, float y = 0.0f, float z = 0.0f)
@@ -159,7 +157,21 @@ public:
 		_scale.x += x;
 		_scale.y += y;
 		_scale.z += z;
-		UpdateModelMatrix();
+		_shouldUpdateMatrix = true;
+	}
+
+	inline void SetOwner(Actor* owner)
+	{
+		_owner = owner;
+	}
+
+	inline void Update()
+	{
+		if(_shouldUpdateMatrix)
+		{
+			_shouldUpdateMatrix = false;
+			UpdateModelMatrix();
+		}
 	}
 
 	void operator=(const Transform& other);

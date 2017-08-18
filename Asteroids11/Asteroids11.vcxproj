@@ -192,6 +192,7 @@
     <ClCompile Include="Audio\Audio.cpp" />
     <ClCompile Include="Audio\AudioClip.cpp" />
     <ClCompile Include="Audio\AudioSource.cpp" />
+    <ClCompile Include="Gameplay\Ship.cpp" />
     <ClCompile Include="Physics\BoxCollider.cpp" />
     <ClCompile Include="Gameplay\Camera.cpp" />
     <ClCompile Include="Physics\CapsuleCollider.cpp" />
@@ -203,6 +204,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Core\MathHelper.cpp" />
     <ClCompile Include="Core\Memory.cpp" />
+    <ClCompile Include="Rendering\Light.cpp" />
     <ClCompile Include="Rendering\Mesh.cpp" />
     <ClCompile Include="Physics\PhysicalBody.cpp" />
     <ClCompile Include="Physics\Physics.cpp" />
@@ -216,6 +218,7 @@
     <ClInclude Include="Audio\Audio.h" />
     <ClInclude Include="Audio\AudioClip.h" />
     <ClInclude Include="Audio\AudioSource.h" />
+    <ClInclude Include="Gameplay\Ship.h" />
     <ClInclude Include="Physics\BoxCollider.h" />
     <ClInclude Include="Gameplay\Camera.h" />
     <ClInclude Include="Physics\CapsuleCollider.h" />
@@ -226,6 +229,7 @@
     <ClInclude Include="Core\Input.h" />
     <ClInclude Include="Core\MathHelper.h" />
     <ClInclude Include="Core\Memory.h" />
+    <ClInclude Include="Rendering\Light.h" />
     <ClInclude Include="Rendering\Mesh.h" />
     <ClInclude Include="Physics\PhysicalBody.h" />
     <ClInclude Include="Physics\Physics.h" />

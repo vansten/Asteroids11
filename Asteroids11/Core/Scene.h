@@ -5,11 +5,15 @@
 #include "Gameplay/Actor.h"
 #include "Gameplay/Camera.h"
 
+class Light;
+
 class Scene
 {
 protected:
 	std::vector<Actor*> _actors;
 	Camera* _camera;
+	Light* _directionalLight;
+	Light* _ambientLight;
 
 public:
 	Scene();

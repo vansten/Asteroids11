@@ -34,14 +34,14 @@ void Cube::Initialize()
 	_vertexBufferData[6] = glm::vec3(hSize, hSize, -hSize);
 	_vertexBufferData[7] = glm::vec3(-hSize, hSize, -hSize);
 
-	_normalBufferData[0] = glm::vec3(0.0f, -1.0f, 0.0f);
-	_normalBufferData[1] = glm::vec3(0.0f, -1.0f, 0.0f);
-	_normalBufferData[2] = glm::vec3(0.0f, -1.0f, 0.0f);
-	_normalBufferData[3] = glm::vec3(0.0f, -1.0f, 0.0f);
-	_normalBufferData[4] = glm::vec3(0.0f, -1.0f, 0.0f);
-	_normalBufferData[5] = glm::vec3(0.0f, -1.0f, 0.0f);
-	_normalBufferData[6] = glm::vec3(0.0f, -1.0f, 0.0f);
-	_normalBufferData[7] = glm::vec3(0.0f, -1.0f, 0.0f);
+	_normalBufferData[0] = glm::normalize(glm::vec3(-1.0f, -1.0f, 1.0f));
+	_normalBufferData[1] = glm::normalize(glm::vec3(1.0f, -1.0f, 1.0f));
+	_normalBufferData[2] = glm::normalize(glm::vec3(1.0f, 1.0f, 1.0f));
+	_normalBufferData[3] = glm::normalize(glm::vec3(-1.0f, 1.0f, 1.0f));
+	_normalBufferData[4] = glm::normalize(glm::vec3(-1.0f, -1.0f, -1.0f));
+	_normalBufferData[5] = glm::normalize(glm::vec3(1.0f, -1.0f, -1.0f));
+	_normalBufferData[6] = glm::normalize(glm::vec3(1.0f, 1.0f, -1.0f));
+	_normalBufferData[7] = glm::normalize(glm::vec3(-1.0f, 1.0f, -1.0f));
 	
 	_indexBufferSize = 36;
 	_indexBufferData = (GLuint*)Memory::GetInstance()->Allocate(sizeof(GLuint) * _indexBufferSize, "GLuint*", __FILE__, __LINE__);

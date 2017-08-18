@@ -48,6 +48,10 @@ public:
 	virtual ~Camera();
 
 	virtual void Update(float deltaTime);
+	virtual void OnModelMatrixUpdated()
+	{
+		UpdateViewMatrix();
+	}
 
 	inline const glm::mat4& GetViewMatrix() const
 	{

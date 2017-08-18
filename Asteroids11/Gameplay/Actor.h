@@ -10,6 +10,7 @@ class Collider;
 class Mesh;
 class PhysicalBody;
 class Graphics;
+class Light;
 
 class Actor
 {
@@ -32,9 +33,10 @@ public:
 	virtual void Update(float deltaTime);
 	void PreSimulate();
 	void PostSimulate();
-	void Render(const class Camera& camera, Graphics* graphics);
+	void Render(const class Camera& camera, Graphics* graphics, Light* ambientLight, Light* directionalLight);
 	
 	void SetTransform(const Transform& transform);
+	virtual void OnModelMatrixUpdated();
 
 	PhysicalBody* CreateRigidbody(bool useGravity);
 

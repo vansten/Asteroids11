@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "Gameplay/Camera.h"
+#include "Light.h"
 
 Graphics::Graphics()
 {
@@ -77,36 +78,7 @@ void Graphics::EndDraw()
 	glfwSwapBuffers(_window);
 }
 
-void Graphics::DrawVertexArray(const Camera& camera, const glm::mat4& modelMatrix, GLuint vertexBuffer, GLuint normalBuffer, GLsizeiptr vertexBufferSize)
-{
-	GLuint mvpID = glGetUniformLocation(_lastProgramID, "MVP");
-	glm::mat4 mvp = camera.GetProjectionMatrix() * camera.GetViewMatrix() * modelMatrix;
-	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &mvp[0][0]);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	glVertexAttribPointer(
-		0,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		3,
-		(void*)0
-	);
-
-	glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
-	glVertexAttribPointer(
-		1,
-		3, 
-		GL_FLOAT,
-		GL_FALSE,
-		0,
-		(void*)0
-	);
-	
-	glDrawArrays(GL_TRIANGLES, 0, (GLsizei)vertexBufferSize);
-}
-
-void Graphics::DrawIndexed(const Camera& camera, const glm::mat4& modelMatrix, const glm::vec4& color, GLuint vertexBuffer, GLuint indexBuffer, GLuint normalBuffer, GLsizeiptr indicesCount)
+void Graphics::DrawIndexed(const Camera& camera, Light* ambientLight, Light* directionalLight, const glm::mat4& modelMatrix, const glm::vec4& color, GLuint vertexBuffer, GLuint indexBuffer, GLuint normalBuffer, GLsizeiptr indicesCount)
 {
 	GLuint mvpID = glGetUniformLocation(_lastProgramID, "MVP");
 	glm::mat4 mvp = camera.GetProjectionMatrix() * camera.GetViewMatrix() * modelMatrix;
@@ -117,6 +89,24 @@ void Graphics::DrawIndexed(const Camera& camera, const glm::mat4& modelMatrix, c
 
 	GLuint modelMatrixID = glGetUniformLocation(_lastProgramID, "ModelMatrix");
 	glUniformMatrix4fv(modelMatrixID, 1, GL_FALSE, &modelMatrix[0][0]);
+
+	if(ambientLight)
+	{
+		GLuint ambientLightID = glGetUniformLocation(_lastProgramID, "AmbientLight");
+		const glm::vec4& ambientColor = ambientLight->GetColor();
+		glUniform4fv(ambientLightID, 1, &ambientColor[0]);
+	}
+
+	if(directionalLight)
+	{
+		GLuint directionalLightID = glGetUniformLocation(_lastProgramID, "DirectionalLight");
+		const glm::vec4& directionalColor = directionalLight->GetColor();
+		glUniform4fv(directionalLightID, 1, &directionalColor[0]);
+
+		GLuint directionalForwardID = glGetUniformLocation(_lastProgramID, "DirectionalForward");
+		glm::vec4 forward = glm::vec4(directionalLight->GetTransform().GetForward(), 0.0f);
+		glUniform4fv(directionalForwardID, 1, &forward[0]);
+	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 	glVertexAttribPointer(

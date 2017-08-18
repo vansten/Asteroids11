@@ -3,16 +3,17 @@
 #include "Camera.h"
 #include "Physics/Collider.h"
 #include "Physics/PhysicalBody.h"
+#include "Rendering/Light.h"
 #include "Rendering/Mesh.h"
 
-Actor::Actor() : _mesh(nullptr), _physicalBody(nullptr), _audioSource(nullptr)
+Actor::Actor() : _mesh(nullptr), _physicalBody(nullptr), _audioSource(nullptr), _transform(this)
 {
 
 }						   
 
 Actor::Actor(const Actor& actor) : _transform(actor._transform), _mesh(actor._mesh)
 {
-
+	_transform.SetOwner(this);
 }
 
 Actor::~Actor()
@@ -49,7 +50,7 @@ void Actor::Shutdown()
 
 void Actor::Update(float deltaTime)
 {
-
+	_transform.Update();
 }
 
 void Actor::PreSimulate()
@@ -68,18 +69,22 @@ void Actor::PostSimulate()
 	}
 }
 
-void Actor::Render(const Camera& camera, Graphics* graphics)
+void Actor::Render(const Camera& camera, Graphics* graphics, Light* ambientLight, Light* directionalLight)
 {
 	if(_mesh)
 	{
-		_mesh->Render(camera, _transform.GetModelToWorldMatrix(), graphics);
+		_mesh->Render(camera, _transform.GetModelToWorldMatrix(), graphics, ambientLight, directionalLight);
 	}
 }
 
 void Actor::SetTransform(const Transform& transform)
 {
 	_transform = transform;
+	_transform.SetOwner(this);
 }
+
+void Actor::OnModelMatrixUpdated()
+{}
 
 PhysicalBody* Actor::CreateRigidbody(bool useGravity)
 {

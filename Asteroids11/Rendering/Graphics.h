@@ -10,6 +10,8 @@
 #pragma comment(lib, "glfw3dll.lib")
 #pragma comment(lib, "glew32.lib")
 
+class Light;
+
 class Graphics
 {
 protected:
@@ -26,8 +28,7 @@ public:
 
 	void BeginDraw();
 	void EndDraw();
-	void DrawVertexArray(const class Camera& camera, const glm::mat4& modelMatrix, GLuint vertexBuffer, GLuint normalBuffer, GLsizeiptr vertexBufferSize);
-	void DrawIndexed(const class Camera& camera, const glm::mat4& modelMatrix, const glm::vec4& color, GLuint vertexBuffer, GLuint indexBuffer, GLuint normalBuffer, GLsizeiptr indicesCount);
+	void DrawIndexed(const class Camera& camera, Light* ambientLight, Light* directionalLight, const glm::mat4& modelMatrix, const glm::vec4& color, GLuint vertexBuffer, GLuint indexBuffer, GLuint normalBuffer, GLsizeiptr indicesCount);
 	void SetShader(GLuint id);
 	
 	void SetTitle(const std::string& title);

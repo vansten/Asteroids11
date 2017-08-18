@@ -1,6 +1,7 @@
 #include "Mesh.h"
 
 #include "Gameplay/Camera.h"
+#include "Light.h"
 
 Mesh::Mesh(Shader* shader, const glm::vec4& color) : _shader(shader), _color(color), _vertexBufferData(nullptr), _indexBufferData(nullptr)
 {
@@ -83,8 +84,8 @@ void Mesh::Shutdown()
 	}
 }
 
-void Mesh::Render(const Camera& camera, const glm::mat4& modelMatrix, Graphics* graphics)
+void Mesh::Render(const Camera& camera, const glm::mat4& modelMatrix, Graphics* graphics, Light* ambientLight, Light* directionalLight)
 {
 	graphics->SetShader(_shader->GetProgramID());
-	graphics->DrawIndexed(camera, modelMatrix, _color, _vertexBuffer, _indexBuffer, _normalBuffer, _indexBufferSize);
+	graphics->DrawIndexed(camera, ambientLight, directionalLight, modelMatrix, _color, _vertexBuffer, _indexBuffer, _normalBuffer, _indexBufferSize);
 }

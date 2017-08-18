@@ -4,6 +4,8 @@
 #include "Shader.h"
 #include "Graphics.h"
 
+class Light;
+
 class Mesh
 {
 protected:
@@ -31,7 +33,7 @@ public:
 	virtual void Initialize();
 	void Shutdown();
 
-	void Render(const class Camera& camera, const glm::mat4& modelMatrix, Graphics* graphics);
+	void Render(const class Camera& camera, const glm::mat4& modelMatrix, Graphics* graphics, Light* ambientLight, Light* directionalLight);
 
 	inline void SetColor(const glm::vec4& color)
 	{

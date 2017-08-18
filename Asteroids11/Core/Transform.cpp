@@ -1,11 +1,26 @@
 #include "Transform.h"
+#include "Gameplay/Actor.h"
 
-Transform::Transform(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale) : _position(position), _rotation(rotation), _scale(scale)
+void Transform::UpdateModelMatrix()
+{
+	_modelMatrix = glm::translate(_position) * glm::toMat4(_rotation) * glm::scale(_scale);
+	_forward = glm::vec3(glm::toMat4(_rotation) * glm::vec4(MathHelper::Forward, 0.0f));
+	_right = glm::cross(_forward, MathHelper::Up);
+	_up = glm::cross(_right, _forward);
+	_right = glm::cross(_forward, _up);
+
+	if(_owner)
+	{
+		_owner->OnModelMatrixUpdated();
+	}
+}
+
+Transform::Transform(Actor* owner, const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale) : _owner(owner), _position(position), _rotation(rotation), _scale(scale), _shouldUpdateMatrix(false)
 {
 	UpdateModelMatrix();
 }
 
-Transform::Transform(const Transform& transform) : _position(transform._position), _rotation(transform._rotation), _scale(transform._scale)
+Transform::Transform(const Transform& transform) : _position(transform._position), _rotation(transform._rotation), _scale(transform._scale), _shouldUpdateMatrix(false)
 {
 	UpdateModelMatrix();
 }
