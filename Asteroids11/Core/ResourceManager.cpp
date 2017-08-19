@@ -6,7 +6,7 @@
 void ResourceManager::Init()
 {
 	Shader* basicShader = GetShader("Shaders/basicVS.glsl", "Shaders/basicFS.glsl");
-	Mesh* m = NewObject(Cube, 1.0f, basicShader, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	Mesh* m = NewObject(Cube, 1.0f);
 	m->Initialize();
 	_meshes.push_back(m);
 }
@@ -20,7 +20,7 @@ void ResourceManager::Shutdown()
 
 Shader* ResourceManager::GetShader(const std::string& vertexShader, const std::string& fragmentShader)
 {
-	std::string key = vertexShader + "_" + fragmentShader;
+	std::string key = "Assets/" + vertexShader + "_Assets/" + fragmentShader;
 	std::vector<Shader*>::iterator it = _shaders.begin();
 
 	for(; it != _shaders.end(); ++it)

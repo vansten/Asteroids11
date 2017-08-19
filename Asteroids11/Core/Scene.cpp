@@ -3,6 +3,7 @@
 #include "Engine.h"
 #include "Input.h"
 #include "ResourceManager.h"
+#include "Gameplay/Asteroid.h"
 #include "Gameplay/Ship.h"
 #include "Physics/BoxCollider.h"
 #include "Physics/CapsuleCollider.h"
@@ -30,15 +31,25 @@ bool Scene::Initialize(ResourceManager& resourceManager)
 	_ambientLight = NewObject(Light);
 	_ambientLight->SetColor(glm::vec4(0.05f, 0.05f, 0.05f, 1.0f));
 
-	//Actor* ship = SpawnActor();
-	Actor* ship = NewObject(Ship, 5.0f);
-	ship->SetMesh(resourceManager.GetMesh(CUBE));
+	Ship* ship = NewObject(Ship);
 	ship->GetTransform().SetPosition(glm::vec3(0.0f, 0.0f, -4.5f));
 	ship->GetTransform().SetScale(glm::vec3(0.3f, 0.1f, 0.8f));
-	ship->GetMesh()->SetColor(glm::vec4(0.75f, 0.15f, 0.35f, 1.0f));
 	_actors.push_back(ship);
 
+	Asteroid* asteroid = NewObject(Asteroid);
+	_actors.push_back(asteroid);
+
 	_camera = NewObject(Camera, glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(glm::half_pi<float>(), 0.0f, 0.0f), CameraSettings(60.0f, 1024.0f / 768.0f, 0.1f, 100.0f));
+	
+	//TODO: Add a asteroid spawner class and object
+
+	auto& it = _actors.begin();
+	for(; it != _actors.end(); ++it)
+	{
+		(*it)->Initialize(resourceManager);
+	}
+
+	asteroid->Shoot(glm::vec3(MathHelper::RandomRange(-5.0f, 5.0f), 0.0f, 4.5f), MathHelper::RandomRange(0.5f, 4.0f));
 
 	return true;
 }
@@ -76,6 +87,16 @@ void Scene::Shutdown()
 
 void Scene::Update(GLfloat deltaTime)
 {
+	if(_pendingActors.size() > 0)
+	{
+		auto& it = _pendingActors.begin();
+		for(; it != _pendingActors.end(); ++it)
+		{
+			_actors.push_back((*it));
+		}
+		_pendingActors.clear();
+	}
+
 	if(_camera)
 	{
 		_camera->Update(deltaTime);
@@ -136,23 +157,4 @@ void Scene::Render(Graphics* graphics)
 			(*it)->Render(*_camera, graphics, _ambientLight, _directionalLight);
 		}
 	}
-}
-
-Actor* Scene::SpawnActor(const Transform& transform)
-{
-	Actor* actor = NewObject(Actor);
-	actor->SetTransform(transform);
-	_actors.push_back(actor);
-
-	return actor;
-}
-
-Actor* Scene::SpawnActor(const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale)
-{
-	Actor* actor = NewObject(Actor);
-	actor->GetTransform().SetPosition(position);
-	actor->GetTransform().SetRotation(rotation);
-	actor->GetTransform().SetScale(scale);
-	_actors.push_back(actor);
-	return actor;
 }

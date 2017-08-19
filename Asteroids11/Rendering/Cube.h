@@ -8,7 +8,7 @@ protected:
 	float _size;
 
 public:
-	Cube(float size, Shader* shader, const glm::vec4& color);
+	Cube(float size);
 	Cube(const Cube& cube);
 	virtual ~Cube();
 

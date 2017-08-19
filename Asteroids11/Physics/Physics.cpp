@@ -7,14 +7,13 @@
 
 PxFilterFlags Physics::FilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0, PxFilterObjectAttributes attributes1, PxFilterData filterData1, PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
 {
-	pairFlags = PxPairFlag::eSOLVE_CONTACT;
-	pairFlags |= PxPairFlag::eDETECT_DISCRETE_CONTACT;
-	pairFlags |= PxPairFlag::eDETECT_CCD_CONTACT;
-	pairFlags |= PxPairFlag::eNOTIFY_CONTACT_POINTS;
+	if(PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
+	{
+		pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
+		return PxFilterFlag::eDEFAULT;
+	}
 
-	pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
-	pairFlags |= PxPairFlag::eNOTIFY_TOUCH_LOST;
-
+	pairFlags = PxPairFlag::eCONTACT_DEFAULT;
 	return PxFilterFlag::eDEFAULT;
 }
 
@@ -348,7 +347,7 @@ void SimulationEventCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		{
 			PxRigidActor* firstActor = pair.triggerActor;
 			PxRigidActor* secondActor = pair.otherActor;
-			TriggerInfo* ti = NewObject(TriggerInfo, (PhysicalBody*)firstActor->userData, (PhysicalBody*)firstActor->userData);
+			TriggerInfo* ti = NewObject(TriggerInfo, (PhysicalBody*)firstActor->userData, (PhysicalBody*)secondActor->userData);
 			_physics->_triggerInfos.push_back(ti);
 		}
 	}

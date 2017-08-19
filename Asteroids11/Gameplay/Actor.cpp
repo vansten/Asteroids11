@@ -1,22 +1,32 @@
 #include "Actor.h"
 
 #include "Camera.h"
+#include "Core/Engine.h"
 #include "Physics/Collider.h"
 #include "Physics/PhysicalBody.h"
 #include "Rendering/Light.h"
 #include "Rendering/Mesh.h"
 
-Actor::Actor() : _mesh(nullptr), _physicalBody(nullptr), _audioSource(nullptr), _transform(this)
+Actor::Actor() : _meshRenderer(nullptr), _physicalBody(nullptr), _audioSource(nullptr), _transform(this), _type(DEFAULT_TYPE)
 {
 
 }						   
 
-Actor::Actor(const Actor& actor) : _transform(actor._transform), _mesh(actor._mesh)
+Actor::Actor(const Actor& actor) : _transform(actor._transform), _type(actor._type)
 {
+	if(actor._meshRenderer != nullptr)
+	{
+		_meshRenderer = NewObject(MeshRenderer, *(actor._meshRenderer));
+	}
 	_transform.SetOwner(this);
 }
 
 Actor::~Actor()
+{
+
+}
+
+void Actor::Initialize(ResourceManager& resourceManager)
 {
 
 }
@@ -30,9 +40,10 @@ void Actor::Shutdown()
 	}
 	_colliders.clear();
 
-	if(_mesh)
+	if(_meshRenderer)
 	{
-		_mesh = nullptr;
+		Memory::GetInstance()->Deallocate<MeshRenderer>(_meshRenderer);
+		_meshRenderer = nullptr;
 	}
 
 	if(_physicalBody != nullptr)
@@ -71,9 +82,9 @@ void Actor::PostSimulate()
 
 void Actor::Render(const Camera& camera, Graphics* graphics, Light* ambientLight, Light* directionalLight)
 {
-	if(_mesh)
+	if(_meshRenderer)
 	{
-		_mesh->Render(camera, _transform.GetModelToWorldMatrix(), graphics, ambientLight, directionalLight);
+		_meshRenderer->Render(camera, _transform.GetModelToWorldMatrix(), graphics, ambientLight, directionalLight);
 	}
 }
 
@@ -85,6 +96,16 @@ void Actor::SetTransform(const Transform& transform)
 
 void Actor::OnModelMatrixUpdated()
 {}
+
+void Actor::OnTrigger(Actor* other)
+{
+	//Do nothing, it's default callback
+}
+
+Scene* Actor::GetScene() const
+{
+	return Engine::GetInstance()->GetCurrentScene();
+}
 
 PhysicalBody* Actor::CreateRigidbody(bool useGravity)
 {

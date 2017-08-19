@@ -2,25 +2,34 @@
 
 #include "Audio/AudioSource.h"
 #include "Core/Memory.h"
+#include "Core/ResourceManager.h"
 #include "Core/Transform.h"
+#include "Rendering/MeshRenderer.h"
 
 #define STRING(T) #T
+
+#define DEFAULT_TYPE		1 << 0
+#define SHIP_TYPE			1 << 1
+#define ASTEROID_TYPE		1 << 2
+#define PROJECTILE_TYPE		1 << 3
 
 class Collider;
 class Mesh;
 class PhysicalBody;
 class Graphics;
 class Light;
+class Scene;
 
 class Actor
 {
 protected:
 	Transform _transform;
-	Mesh* _mesh;
+	MeshRenderer* _meshRenderer;
 	PhysicalBody* _physicalBody;
 	AudioSource* _audioSource;
 	std::vector<Collider*> _colliders;
 
+	int _type;
 	bool _enabled;
 
 public:
@@ -28,6 +37,7 @@ public:
 	Actor(const Actor& actor);
 	virtual ~Actor();
 
+	virtual void Initialize(ResourceManager& resourceManager);
 	void Shutdown();
 
 	virtual void Update(float deltaTime);
@@ -37,6 +47,10 @@ public:
 	
 	void SetTransform(const Transform& transform);
 	virtual void OnModelMatrixUpdated();
+
+	virtual void OnTrigger(Actor* other);
+
+	Scene* GetScene() const;
 
 	PhysicalBody* CreateRigidbody(bool useGravity);
 
@@ -53,14 +67,22 @@ public:
 		return _audioSource;
 	}
 
+	inline MeshRenderer* CreateMeshRenderer(Mesh* mesh, Shader* shader)
+	{
+		if(_meshRenderer)
+		{
+			Memory::GetInstance()->Deallocate<MeshRenderer>(_meshRenderer);
+			_meshRenderer = nullptr;
+		}
+
+		_meshRenderer = NewObject(MeshRenderer, shader);
+		_meshRenderer->SetMesh(mesh);
+		return _meshRenderer;
+	}
+
 	inline void AddCollider(Collider* col)
 	{
 		_colliders.push_back(col);
-	}
-
-	inline void SetMesh(Mesh* mesh)
-	{
-		_mesh = mesh;
 	}
 
 	inline void SetEnabled(bool newEnabled)
@@ -78,9 +100,9 @@ public:
 		return _transform;
 	}
 
-	inline Mesh* GetMesh() const
+	inline MeshRenderer* GetMeshRenderer() const
 	{
-		return _mesh;
+		return _meshRenderer;
 	}
 
 	inline AudioSource* GetAudioSource() const
@@ -91,6 +113,11 @@ public:
 	inline PhysicalBody* GetPhysicalBody() const
 	{
 		return _physicalBody;
+	}
+
+	inline int GetType() const
+	{
+		return _type;
 	}
 
 	inline bool IsEnabled() const

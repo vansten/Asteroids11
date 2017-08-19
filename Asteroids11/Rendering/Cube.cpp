@@ -3,7 +3,7 @@
 #include "Core/Memory.h"
 #include "Core/ResourceManager.h"
 
-Cube::Cube(float size, Shader* shader, const glm::vec4& color) : Mesh(shader, color), _size(size)
+Cube::Cube(float size) : Mesh(), _size(size)
 {
 	_name = CUBE;
 }

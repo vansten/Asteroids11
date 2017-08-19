@@ -192,6 +192,8 @@
     <ClCompile Include="Audio\Audio.cpp" />
     <ClCompile Include="Audio\AudioClip.cpp" />
     <ClCompile Include="Audio\AudioSource.cpp" />
+    <ClCompile Include="Gameplay\Asteroid.cpp" />
+    <ClCompile Include="Gameplay\Projectile.cpp" />
     <ClCompile Include="Gameplay\Ship.cpp" />
     <ClCompile Include="Physics\BoxCollider.cpp" />
     <ClCompile Include="Gameplay\Camera.cpp" />
@@ -210,6 +212,7 @@
     <ClCompile Include="Physics\Physics.cpp" />
     <ClCompile Include="Core\ResourceManager.cpp" />
     <ClCompile Include="Core\Scene.cpp" />
+    <ClCompile Include="Rendering\MeshRenderer.cpp" />
     <ClCompile Include="Rendering\Shader.cpp" />
     <ClCompile Include="Core\Transform.cpp" />
   </ItemGroup>
@@ -218,6 +221,8 @@
     <ClInclude Include="Audio\Audio.h" />
     <ClInclude Include="Audio\AudioClip.h" />
     <ClInclude Include="Audio\AudioSource.h" />
+    <ClInclude Include="Gameplay\Asteroid.h" />
+    <ClInclude Include="Gameplay\Projectile.h" />
     <ClInclude Include="Gameplay\Ship.h" />
     <ClInclude Include="Physics\BoxCollider.h" />
     <ClInclude Include="Gameplay\Camera.h" />
@@ -235,6 +240,7 @@
     <ClInclude Include="Physics\Physics.h" />
     <ClInclude Include="Core\ResourceManager.h" />
     <ClInclude Include="Core\Scene.h" />
+    <ClInclude Include="Rendering\MeshRenderer.h" />
     <ClInclude Include="Rendering\Shader.h" />
     <ClInclude Include="Core\Transform.h" />
   </ItemGroup>

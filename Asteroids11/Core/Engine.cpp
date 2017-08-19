@@ -1,6 +1,7 @@
 #include "Engine.h"
 
 #include "Input.h"
+#include "MathHelper.h"
 
 Engine* Engine::_instance = nullptr;
 
@@ -28,6 +29,8 @@ Engine::~Engine()
 
 bool Engine::Initialize()
 {
+	MathHelper::InitRand();
+
 	_graphics = NewObject(Graphics);
 	if(!_graphics->Initialize())
 	{

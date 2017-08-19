@@ -2,23 +2,19 @@
 
 #include "Actor.h"
 
-class Projectile;
+class Ship;
 
-class Ship : public Actor
+class Projectile : public Actor
 {
 protected:
-	float _xRestriction;
+	Ship* _ownerShip;
 	float _speed;
-	bool _shoot;
-
-	std::vector<Projectile*> _projectiles;
 
 public:
-	Ship();
+	Projectile();
 
 protected:
 	void ProcessTransform(float deltaTime);
-	void ProcessShooting();
 
 public:
 	virtual void Initialize(ResourceManager& resourceManager);
@@ -27,5 +23,6 @@ public:
 
 	virtual void OnTrigger(Actor* other);
 
-	void ReturnProjectile(Projectile* projectile);
+	void Destroy();
+	void Shoot(Ship* ownerShip, const glm::vec3& initialPosition, float speed);
 };

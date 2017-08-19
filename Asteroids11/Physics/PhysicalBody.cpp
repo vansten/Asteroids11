@@ -44,7 +44,10 @@ void PhysicalBody::PostSimulation()
 
 void PhysicalBody::OnTrigger(PhysicalBody* other)
 {
-	printf("Trigger\n");
+	if(_owner && _owner->IsEnabled() && other && other->_owner && other->_owner->IsEnabled())
+	{
+		_owner->OnTrigger(other->_owner);
+	}
 }
 
 void PhysicalBody::OnContact(PhysicalBody* other)
