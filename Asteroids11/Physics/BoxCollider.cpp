@@ -13,3 +13,13 @@ BoxCollider::~BoxCollider()
 {
 
 }
+
+void BoxCollider::UpdateSize(const glm::vec3& newScale)
+{
+	static PxBoxGeometry box;
+	if(_physxShape && _physxShape->getBoxGeometry(box))
+	{
+		box.halfExtents = GLMVec3ToPxVec3(glm::vec3(_hSize.x * newScale.x, _hSize.y * newScale.y, _hSize.z * newScale.z));
+		_physxShape->setGeometry(box);
+	}
+}

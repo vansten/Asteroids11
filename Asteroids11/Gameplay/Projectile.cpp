@@ -25,7 +25,7 @@ void Projectile::Initialize(ResourceManager& resourceManager)
 
 	MeshRenderer* meshRenderer = CreateMeshRenderer(resourceManager.GetMesh(CUBE), resourceManager.GetShader("Shaders/basicVS.glsl", "Shaders/basicFS.glsl"));
 	meshRenderer->SetColor(glm::vec4(0.95f, 0.05f, 0.05f, 1.0f));
-	glm::vec3 scale(0.25f, 0.1f, 0.25f);
+	glm::vec3 scale(0.1f, 0.1f, 0.25f);
 	_transform.SetScale(scale);
 
 	_type = PROJECTILE_TYPE;
@@ -50,7 +50,7 @@ void Projectile::OnTrigger(Actor* other)
 		Asteroid* asteroid = reinterpret_cast<Asteroid*>(other);
 		if(asteroid)
 		{
-			asteroid->Destroy();
+			asteroid->Destroy(true);
 			Destroy();
 		}
 	}
@@ -62,7 +62,6 @@ void Projectile::Destroy()
 	{
 		_ownerShip->ReturnProjectile(this);
 		SetEnabled(false);
-		printf("Destroy projectile\n");
 	}
 }
 

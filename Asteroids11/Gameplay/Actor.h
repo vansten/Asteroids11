@@ -46,6 +46,7 @@ public:
 	void Render(const class Camera& camera, Graphics* graphics, Light* ambientLight, Light* directionalLight);
 	
 	void SetTransform(const Transform& transform);
+	void UpdateSize(const glm::vec3& newScale);
 	virtual void OnModelMatrixUpdated();
 
 	virtual void OnTrigger(Actor* other);
@@ -87,7 +88,14 @@ public:
 
 	inline void SetEnabled(bool newEnabled)
 	{
-		_enabled = newEnabled;
+		if(_enabled ^ newEnabled)
+		{
+			_enabled = newEnabled;
+			if(_enabled)
+			{
+				_transform.Update();
+			}
+		}
 	}
 
 	inline const std::vector<Collider*>& GetColliders() const

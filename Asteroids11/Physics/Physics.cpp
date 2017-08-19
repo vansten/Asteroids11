@@ -297,6 +297,36 @@ void Physics::Update(float fixedDeltaTime)
 	_physxScene->fetchResults(true);
 }
 
+void Physics::Reload(PxTolerancesScale scale)
+{
+	//Maybe there is a better way to reload physx?
+	//Maybe something like flushing results and removing all actors is possible?
+	//And there is no need to recreate scene?
+
+	if(_physxScene != nullptr)
+	{
+		_physxScene->fetchResults(true);
+		_physxScene->release();
+	}
+
+	auto& it = _triggerInfos.begin();
+	for(; it != _triggerInfos.end(); ++it)
+	{
+		Memory::GetInstance()->Deallocate((*it));
+		(*it) = nullptr;
+	}
+	_triggerInfos.clear();
+
+	PxSceneDesc sceneDesc(scale);
+	sceneDesc.flags |= PxSceneFlag::eENABLE_CCD;
+	sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
+	sceneDesc.cpuDispatcher = _cpuDispatcher;
+	sceneDesc.filterShader = Physics::FilterShader;
+	sceneDesc.simulationEventCallback = _simulationEventCallback;
+
+	_physxScene = _physxSDK->createScene(sceneDesc);
+}
+
 glm::vec3 PxVec3ToGLMVec3(const PxVec3& vector)
 {
 	return glm::vec3(vector.x, vector.y, vector.z);

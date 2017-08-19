@@ -65,6 +65,8 @@ bool Engine::Initialize()
 
 	PhysicsHelper::SetPhysics(_physics);
 
+	_shouldReload = false;
+
 	return true;
 }
 
@@ -76,6 +78,15 @@ void Engine::Run()
 	double timer = 0.0f;
 	while(!ShouldQuit())
 	{
+		if(_shouldReload)
+		{
+			_physics->Reload();
+			_currentScene->Shutdown();
+			_currentScene->Initialize(_resourceManager);
+			_shouldReload = false;
+			continue;
+		}
+
 		_currentScene->PreSimulate();
 		_physics->Update(fixedTimeStep);
 		_currentScene->PostSimulate();

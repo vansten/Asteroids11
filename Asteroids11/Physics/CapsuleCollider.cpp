@@ -11,3 +11,14 @@ CapsuleCollider::CapsuleCollider(Actor* owner, bool isTrigger, float height, flo
 
 CapsuleCollider::~CapsuleCollider()
 {}
+
+void CapsuleCollider::UpdateSize(const glm::vec3& newScale)
+{
+	static PxCapsuleGeometry capsule;
+	if(_physxShape && _physxShape->getCapsuleGeometry(capsule))
+	{
+		capsule.halfHeight = _hHeight * newScale.y;
+		capsule.radius = _radius * glm::min(newScale.x, newScale.z);
+		_physxShape->setGeometry(capsule);
+	}
+}

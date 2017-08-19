@@ -3,7 +3,7 @@
 #include "Engine.h"
 #include "Input.h"
 #include "ResourceManager.h"
-#include "Gameplay/Asteroid.h"
+#include "Gameplay/AsteroidSpawner.h"
 #include "Gameplay/Ship.h"
 #include "Physics/BoxCollider.h"
 #include "Physics/CapsuleCollider.h"
@@ -31,25 +31,15 @@ bool Scene::Initialize(ResourceManager& resourceManager)
 	_ambientLight = NewObject(Light);
 	_ambientLight->SetColor(glm::vec4(0.05f, 0.05f, 0.05f, 1.0f));
 
-	Ship* ship = NewObject(Ship);
+	Ship* ship = SpawnActor<Ship>();
 	ship->GetTransform().SetPosition(glm::vec3(0.0f, 0.0f, -4.5f));
 	ship->GetTransform().SetScale(glm::vec3(0.3f, 0.1f, 0.8f));
-	_actors.push_back(ship);
-
-	Asteroid* asteroid = NewObject(Asteroid);
-	_actors.push_back(asteroid);
+	
+	AsteroidSpawner* spawner = SpawnActor<AsteroidSpawner>();
+	spawner->GetTransform().SetPosition(glm::vec3(0.0f, 0.0f, 5.0f));
 
 	_camera = NewObject(Camera, glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(glm::half_pi<float>(), 0.0f, 0.0f), CameraSettings(60.0f, 1024.0f / 768.0f, 0.1f, 100.0f));
-	
-	//TODO: Add a asteroid spawner class and object
-
-	auto& it = _actors.begin();
-	for(; it != _actors.end(); ++it)
-	{
-		(*it)->Initialize(resourceManager);
-	}
-
-	asteroid->Shoot(glm::vec3(MathHelper::RandomRange(-5.0f, 5.0f), 0.0f, 4.5f), MathHelper::RandomRange(0.5f, 4.0f));
+	_camera->Initialize(resourceManager);
 
 	return true;
 }
@@ -157,4 +147,9 @@ void Scene::Render(Graphics* graphics)
 			(*it)->Render(*_camera, graphics, _ambientLight, _directionalLight);
 		}
 	}
+}
+
+void Scene::Reload()
+{
+	Engine::GetInstance()->Reload();
 }

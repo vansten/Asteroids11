@@ -23,12 +23,25 @@ void Ship::ProcessShooting()
 	if(!_shoot && Input::GetKey(GLFW_KEY_SPACE))
 	{
 		_shoot = true;
-		//Spawn projectile actor :)
+
+		Projectile* projectile = nullptr;
 		if(_projectiles.size() > 0)
 		{
-			Projectile* p = _projectiles.at(0);
+			projectile = _projectiles.at(0);
 			_projectiles.erase(_projectiles.begin());
-			p->Shoot(this, _transform.GetPosition() + MathHelper::Forward * _transform.GetScale().z * 0.65f, 5.0f);
+		}
+		else
+		{
+			Scene* scene = GetScene();
+			if(scene)
+			{
+				projectile = scene->SpawnActor<Projectile>();
+			}
+		}
+
+		if(projectile)
+		{
+			projectile->Shoot(this, _transform.GetPosition() + MathHelper::Forward * _transform.GetScale().z * 0.65f, 10.0f);
 		}
 	}
 
@@ -50,10 +63,10 @@ void Ship::Initialize(ResourceManager& resourceManager)
 
 	_speed = 5.0f;
 
-	Scene* currentScene = Engine::GetInstance()->GetCurrentScene();
+	Scene* currentScene = GetScene();
 	if(currentScene)
 	{
-		for(int i = 0; i < 80; ++i)
+		for(int i = 0; i < 10; ++i)
 		{
 			_projectiles.push_back(currentScene->SpawnActor<Projectile>());
 		}
@@ -72,8 +85,11 @@ void Ship::OnTrigger(Actor* other)
 {
 	if(other && other->GetType() == ASTEROID_TYPE)
 	{
-		//TODO: Change this to something like GetCurrentScene()->Reload()
-		printf("Reset game\n");
+		Scene* scene = GetScene();
+		if(scene)
+		{
+			scene->Reload();
+		}
 	}
 }
 

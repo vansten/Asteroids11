@@ -29,6 +29,8 @@ protected:
 	Scene* _currentScene;
 	ResourceManager _resourceManager;
 
+	bool _shouldReload;
+
 protected:
 	bool ShouldQuit() const;
 
@@ -39,6 +41,11 @@ public:
 	bool Initialize();
 	void Run();
 	void Shutdown();
+
+	inline void Reload()
+	{
+		_shouldReload = true;
+	}
 
 	inline Graphics& GetGraphics()
 	{

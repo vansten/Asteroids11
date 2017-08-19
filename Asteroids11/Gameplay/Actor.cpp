@@ -94,6 +94,15 @@ void Actor::SetTransform(const Transform& transform)
 	_transform.SetOwner(this);
 }
 
+void Actor::UpdateSize(const glm::vec3& newScale)
+{
+	auto& it = _colliders.begin();
+	for(; it != _colliders.end(); ++it)
+	{
+		(*it)->UpdateSize(newScale);
+	}
+}
+
 void Actor::OnModelMatrixUpdated()
 {}
 

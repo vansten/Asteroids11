@@ -185,6 +185,8 @@ public:
 	void Resolve();
 	void Update(float fixedDeltaTime);
 
+	void Reload(PxTolerancesScale scale = PxTolerancesScale());
+
 	inline PxScene* GetScene() const
 	{
 		return _physxScene;
@@ -203,12 +205,12 @@ public:
 
 	inline PxShape* CreateBoxShape(float hSizeX, float hSizeY, float hSizeZ) const
 	{
-		return _physxSDK->createShape(PxBoxGeometry(hSizeX, hSizeY, hSizeZ), *_material);
+		return _physxSDK->createShape(PxBoxGeometry(hSizeX, hSizeY, hSizeZ), *_material, true);
 	}
 
 	inline PxShape* CreateCapsuleShape(float radius, float halfHeight) const
 	{
-		return _physxSDK->createShape(PxCapsuleGeometry(radius, halfHeight), *_material);
+		return _physxSDK->createShape(PxCapsuleGeometry(radius, halfHeight), *_material, true);
 	}
 };
 

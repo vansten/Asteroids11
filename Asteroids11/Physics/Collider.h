@@ -15,6 +15,8 @@ public:
 	Collider(Actor* owner, bool isTrigger = false);
 	virtual ~Collider();
 
+	virtual void UpdateSize(const glm::vec3& newScale);
+
 	inline PxShape* GetShape() const
 	{
 		return _physxShape;

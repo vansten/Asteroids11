@@ -30,6 +30,16 @@ Transform::~Transform()
 
 }
 
+void Transform::SetScale(const glm::vec3& scale)
+{
+	_scale = scale;
+	_shouldUpdateMatrix = true;
+	if(_owner)
+	{
+		_owner->UpdateSize(_scale);
+	}
+}
+
 void Transform::operator=(const Transform& other)
 {
 	_position = other._position;

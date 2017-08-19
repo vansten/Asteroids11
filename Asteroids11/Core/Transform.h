@@ -104,11 +104,7 @@ public:
 		_shouldUpdateMatrix = true;
 	}
 
-	inline void SetScale(const glm::vec3& scale)
-	{
-		_scale = scale;
-		_shouldUpdateMatrix = true;
-	}
+	void SetScale(const glm::vec3& scale);
 
 	inline void Translate(const glm::vec3& translation)
 	{

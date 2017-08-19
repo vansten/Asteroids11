@@ -193,6 +193,7 @@
     <ClCompile Include="Audio\AudioClip.cpp" />
     <ClCompile Include="Audio\AudioSource.cpp" />
     <ClCompile Include="Gameplay\Asteroid.cpp" />
+    <ClCompile Include="Gameplay\AsteroidSpawner.cpp" />
     <ClCompile Include="Gameplay\Projectile.cpp" />
     <ClCompile Include="Gameplay\Ship.cpp" />
     <ClCompile Include="Physics\BoxCollider.cpp" />
@@ -222,6 +223,7 @@
     <ClInclude Include="Audio\AudioClip.h" />
     <ClInclude Include="Audio\AudioSource.h" />
     <ClInclude Include="Gameplay\Asteroid.h" />
+    <ClInclude Include="Gameplay\AsteroidSpawner.h" />
     <ClInclude Include="Gameplay\Projectile.h" />
     <ClInclude Include="Gameplay\Ship.h" />
     <ClInclude Include="Physics\BoxCollider.h" />

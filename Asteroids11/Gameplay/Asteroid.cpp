@@ -1,5 +1,6 @@
 #include "Asteroid.h"
 
+#include "AsteroidSpawner.h"
 #include "Core/MathHelper.h"
 #include "Physics/BoxCollider.h"
 
@@ -16,7 +17,7 @@ void Asteroid::ProcessTransform(float deltaTime)
 	//TODO: Change this check to !IsVisibleByCamera() or something like that
 	if(_transform.GetPosition().z < -5.5f)
 	{
-		Destroy();
+		Destroy(false);
 	}
 }
 
@@ -53,8 +54,9 @@ void Asteroid::Update(float deltaTime)
 	ProcessTransform(deltaTime);
 }
 
-void Asteroid::Shoot(const glm::vec3& initialPosition, float speed)
+void Asteroid::Shoot(AsteroidSpawner* spawner, const glm::vec3& initialPosition, float speed)
 {
+	_spawner = spawner;
 	_transform.SetPosition(initialPosition);
 
 	glm::vec3 directionRotation(0.0f, glm::radians(MathHelper::RandomRange(-25.0f, 25.0f)), 0.0f);
@@ -68,7 +70,8 @@ void Asteroid::Shoot(const glm::vec3& initialPosition, float speed)
 	SetEnabled(true);
 }
 
-void Asteroid::Destroy()
+void Asteroid::Destroy(bool byProjectile)
 {
+	_spawner->ReturnAsteroid(this, byProjectile);
 	SetEnabled(false);
 }

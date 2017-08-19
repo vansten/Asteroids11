@@ -9,3 +9,6 @@ Collider::~Collider()
 {
 
 }
+
+void Collider::UpdateSize(const glm::vec3& newScale)
+{}
