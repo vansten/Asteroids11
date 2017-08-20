@@ -7,7 +7,7 @@
 #include "Rendering/Light.h"
 #include "Rendering/Mesh.h"
 
-Actor::Actor() : _meshRenderer(nullptr), _physicalBody(nullptr), _audioSource(nullptr), _transform(this), _type(DEFAULT_TYPE)
+Actor::Actor() : _meshRenderer(nullptr), _physicalBody(nullptr), _transform(this), _type(DEFAULT_TYPE)
 {
 
 }						   
@@ -28,7 +28,8 @@ Actor::~Actor()
 
 void Actor::Initialize(ResourceManager& resourceManager)
 {
-
+	_enabled = true;
+	_killTimer = 0.0f;
 }
 
 void Actor::Shutdown()
@@ -52,16 +53,47 @@ void Actor::Shutdown()
 		_physicalBody = nullptr;
 	}
 
-	if(_audioSource != nullptr)
+	auto& audioSourceIT = _audioSources.begin();
+	for(; audioSourceIT != _audioSources.end(); ++audioSourceIT)
 	{
-		Memory::GetInstance()->Deallocate<AudioSource>(_audioSource);
-		_audioSource = nullptr;
+		Memory::GetInstance()->Deallocate<AudioSource>((*audioSourceIT));
+	}
+	_audioSources.clear();
+}
+
+void Actor::SetEnabled(bool newEnabled)
+{
+	if(_enabled ^ newEnabled)
+	{
+		_enabled = newEnabled;
+		if(_enabled)
+		{
+			_killTimer = 0.0f;
+			_transform.Update();
+		}
+		else
+		{
+			auto& it = _audioSources.begin();
+			for(; it != _audioSources.end(); ++it)
+			{
+				(*it)->Stop();
+			}
+		}
 	}
 }
 
 void Actor::Update(float deltaTime)
 {
 	_transform.Update();
+
+	if(_killTimer > 0.0f)
+	{
+		_killTimer -= deltaTime;
+		if(_killTimer <= 0.0f)
+		{
+			OnKill();
+		}
+	}
 }
 
 void Actor::PreSimulate()
@@ -104,11 +136,18 @@ void Actor::UpdateSize(const glm::vec3& newScale)
 }
 
 void Actor::OnModelMatrixUpdated()
-{}
+{
+
+}
 
 void Actor::OnTrigger(Actor* other)
 {
 	//Do nothing, it's default callback
+}
+
+void Actor::OnKill()
+{
+	SetEnabled(false);
 }
 
 bool Actor::IsVisibleByCamera() const

@@ -10,23 +10,30 @@ class Ship : public Actor
 protected:
 	float _xRestriction;
 	float _speed;
-	bool _shoot;
 
 	ActorsPool<Projectile> _projectiles;
+	AudioSource* _shootAS;
+	AudioSource* _destroyAS;
+
+	float _shootTimer;
+	float _shootCooldown;
+	bool _canShoot;
 
 public:
 	Ship();
 
 protected:
 	void ProcessTransform(float deltaTime);
-	void ProcessShooting();
+	void ProcessShooting(float deltaTime);
 
 public:
-	virtual void Initialize(ResourceManager& resourceManager);
+	virtual void Initialize(ResourceManager& resourceManager) override;
 
-	virtual void Update(float deltaTime);
+	virtual void Update(float deltaTime) override;
 
-	virtual void OnTrigger(Actor* other);
+	virtual void OnTrigger(Actor* other) override;
+	virtual void OnKill() override;
 
 	void ReturnProjectile(Projectile* projectile);
+	void DestroyInTime(float time);
 };

@@ -4,9 +4,9 @@
 #include "Core/Engine.h"
 #include "Gameplay/Actor.h"
 
-AudioSource::AudioSource(AudioClip* clip) : _clip(clip), _channel(nullptr)
+AudioSource::AudioSource(AudioClip* clip) : _clip(clip), _channel(nullptr), _volume(1.0f)
 {
-	clip->_sound->setMode(FMOD_3D);
+	clip->_sound->setMode(FMOD_2D);
 }
 
 
@@ -22,14 +22,9 @@ void AudioSource::Play(bool loop)
 		Stop();
 	}
 
-	FMOD_VECTOR pos;
-	pos.x = _owner->GetTransform().GetPosition().x;
-	pos.y = _owner->GetTransform().GetPosition().y;
-	pos.z = _owner->GetTransform().GetPosition().z;
-	FMOD_VECTOR vel;
-	_channel->set3DAttributes(&pos, &vel);
 	Engine::GetInstance()->GetAudio().PlaySound(this);
 	_channel->setMode(loop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF);
+	_channel->setVolume(_volume);
 }
 
 void AudioSource::Stop()
@@ -38,4 +33,9 @@ void AudioSource::Stop()
 	{
 		_channel->stop();
 	}
+}
+
+float AudioSource::GetClipLength() const
+{
+	return _clip ? _clip->GetLength() : 0.0f;
 }

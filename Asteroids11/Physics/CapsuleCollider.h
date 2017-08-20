@@ -12,6 +12,6 @@ public:
 	CapsuleCollider(Actor* owner, bool isTrigger, float Height, float Radius);
 	virtual~CapsuleCollider();
 
-	virtual void UpdateSize(const glm::vec3& newScale);
+	virtual void UpdateSize(const glm::vec3& newScale) override;
 };
 

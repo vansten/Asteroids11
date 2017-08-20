@@ -44,12 +44,19 @@ void Asteroid::Initialize(ResourceManager& resourceManager)
 	AddCollider(NewObject(BoxCollider, this, true, scale));
 	CreateRigidbody(false);
 
+	_destroyAS = CreateAudioSource(resourceManager.GetAudioClip("Audio/asteroidDestroy.wav"));
+
 	SetEnabled(false);
 }
 
 void Asteroid::Update(float deltaTime)
 {
 	Actor::Update(deltaTime);
+
+	if(IsPendingKill())
+	{
+		return;
+	}
 
 	ProcessTransform(deltaTime);
 }
@@ -73,5 +80,14 @@ void Asteroid::Shoot(AsteroidSpawner* spawner, const glm::vec3& initialPosition,
 void Asteroid::Destroy(bool byProjectile)
 {
 	_spawner->ReturnAsteroid(this, byProjectile);
-	SetEnabled(false);
+	if(byProjectile)
+	{
+		float time = _destroyAS->GetClipLength();
+		_destroyAS->Play();
+		Kill(time);
+	}
+	else
+	{
+		SetEnabled(false);
+	}
 }

@@ -24,9 +24,9 @@ protected:
 	void SpawnAsteroid();
 
 public:
-	virtual void Initialize(ResourceManager& resourceManager);
+	virtual void Initialize(ResourceManager& resourceManager) override;
 
-	virtual void Update(float deltaTime);
+	virtual void Update(float deltaTime) override;
 
 	void ReturnAsteroid(Asteroid* asteroid, bool byProjectile);
 };

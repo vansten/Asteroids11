@@ -40,6 +40,7 @@ Shader* ResourceManager::GetShader(const std::string& vertexShader, const std::s
 
 AudioClip* ResourceManager::GetAudioClip(const std::string& wavFileName)
 {
+	std::string compareKey = "Assets/" + wavFileName;
 	std::vector<AudioClip*>::iterator it = _audioClips.begin();
 	for(; it != _audioClips.end(); ++it)
 	{
@@ -49,7 +50,7 @@ AudioClip* ResourceManager::GetAudioClip(const std::string& wavFileName)
 		}
 	}
 
-	AudioClip* ac = NewObject(AudioClip, "Assets/" + wavFileName);
+	AudioClip* ac = NewObject(AudioClip, compareKey);
 	ac->Initialize();
 	_audioClips.push_back(ac);
 	return ac;
@@ -66,6 +67,6 @@ Mesh* ResourceManager::GetMesh(const std::string& meshName)
 		}
 	}
 
-	//Do not create new meshes (since the framework supports only cube, triangle and sphere meshes and they're added to vector during the initialization)
+	//Do not create new meshes (since the framework supports only cube mesh and they're added to vector during the initialization)
 	return nullptr;
 }

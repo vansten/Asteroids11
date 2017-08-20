@@ -12,7 +12,7 @@ public:
 	Cube(const Cube& cube);
 	virtual ~Cube();
 
-	virtual void Initialize();
+	virtual void Initialize() override;
 
 	inline float GetSize() const
 	{

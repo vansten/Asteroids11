@@ -44,7 +44,7 @@ void PhysicalBody::PostSimulation()
 
 void PhysicalBody::OnTrigger(PhysicalBody* other)
 {
-	if(_owner && _owner->IsEnabled() && other && other->_owner && other->_owner->IsEnabled())
+	if(_owner && _owner->IsEnabled() && !_owner->IsPendingKill() && other && other->_owner && other->_owner->IsEnabled() && !other->_owner->IsPendingKill())
 	{
 		_owner->OnTrigger(other->_owner);
 	}

@@ -23,5 +23,18 @@ public:
 	{
 		return _wavFileName;
 	}
+
+	inline float GetLength() const
+	{
+		if(!_sound)
+		{
+			return 0.0f;
+		}
+
+		unsigned int lengthMS;
+		FMOD_RESULT result = _sound->getLength(&lengthMS, FMOD_TIMEUNIT_MS);
+
+		return result == FMOD_OK ? 0.001f * lengthMS : 0.0f;
+	}
 };
 

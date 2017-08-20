@@ -28,5 +28,16 @@ public:
 	{
 		return (rand() / (float)RAND_MAX);
 	}
+
+	inline static float MoveTowards(float from, float to, float maxDelta)
+	{
+		float delta = to - from;
+		if(glm::abs(delta) > maxDelta)
+		{
+			delta = glm::sign(delta) * maxDelta;
+		}
+
+		return from + delta;
+	}
 };
 

@@ -27,9 +27,10 @@ protected:
 	Transform _transform;
 	MeshRenderer* _meshRenderer;
 	PhysicalBody* _physicalBody;
-	AudioSource* _audioSource;
+	std::vector<AudioSource*> _audioSources;
 	std::vector<Collider*> _colliders;
 
+	float _killTimer;
 	int _type;
 	bool _enabled;
 
@@ -41,6 +42,8 @@ public:
 	virtual void Initialize(ResourceManager& resourceManager);
 	void Shutdown();
 
+	void SetEnabled(bool newEnabled);
+
 	virtual void Update(float deltaTime);
 	void PreSimulate();
 	void PostSimulate();
@@ -51,6 +54,7 @@ public:
 	virtual void OnModelMatrixUpdated();
 
 	virtual void OnTrigger(Actor* other);
+	virtual void OnKill();
 
 	//Checks if objects bounds are visible by camera
 	bool IsVisibleByCamera() const;
@@ -61,15 +65,10 @@ public:
 
 	inline AudioSource* CreateAudioSource(AudioClip* clip)
 	{
-		if(_audioSource)
-		{
-			Memory::GetInstance()->Deallocate<AudioSource>(_audioSource);
-			_audioSource = nullptr;
-		}
-
-		_audioSource = NewObject(AudioSource, clip);
-		_audioSource->SetOwner(this);
-		return _audioSource;
+		AudioSource* audioSource = NewObject(AudioSource, clip);
+		audioSource->SetOwner(this);
+		_audioSources.push_back(audioSource);
+		return audioSource;
 	}
 
 	inline MeshRenderer* CreateMeshRenderer(Mesh* mesh, Shader* shader)
@@ -90,16 +89,9 @@ public:
 		_colliders.push_back(col);
 	}
 
-	inline void SetEnabled(bool newEnabled)
+	inline void Kill(float time)
 	{
-		if(_enabled ^ newEnabled)
-		{
-			_enabled = newEnabled;
-			if(_enabled)
-			{
-				_transform.Update();
-			}
-		}
+		_killTimer = time;
 	}
 
 	inline const std::vector<Collider*>& GetColliders() const
@@ -117,9 +109,9 @@ public:
 		return _meshRenderer;
 	}
 
-	inline AudioSource* GetAudioSource() const
+	inline std::vector<AudioSource*> GetAudioSources() const
 	{
-		return _audioSource;
+		return _audioSources;
 	}
 
 	inline PhysicalBody* GetPhysicalBody() const
@@ -135,6 +127,11 @@ public:
 	inline bool IsEnabled() const
 	{
 		return _enabled;
+	}
+
+	inline bool IsPendingKill() const
+	{
+		return _killTimer > 0.0f;
 	}
 };
 

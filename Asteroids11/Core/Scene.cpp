@@ -24,6 +24,9 @@ Scene::~Scene()
 
 bool Scene::Initialize(ResourceManager& resourceManager)
 {
+	_camera = NewObject(Camera, glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(glm::half_pi<float>(), 0.0f, 0.0f), CameraSettings(60.0f, 1024.0f / 768.0f, 0.1f, 100.0f));
+	_camera->Initialize(resourceManager);
+
 	_directionalLight = NewObject(Light);
 	_directionalLight->GetTransform().SetRotation(glm::vec3(glm::pi<float>() * 0.4f, 0.0f, 0.0f));
 	_directionalLight->SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) * 0.8f);
@@ -32,14 +35,9 @@ bool Scene::Initialize(ResourceManager& resourceManager)
 	_ambientLight->SetColor(glm::vec4(0.05f, 0.05f, 0.05f, 1.0f));
 
 	Ship* ship = SpawnActor<Ship>();
-	ship->GetTransform().SetPosition(glm::vec3(0.0f, 0.0f, -4.5f));
-	ship->GetTransform().SetScale(glm::vec3(0.3f, 0.1f, 0.8f));
 	
 	AsteroidSpawner* spawner = SpawnActor<AsteroidSpawner>();
-	spawner->GetTransform().SetPosition(glm::vec3(0.0f, 0.0f, 5.0f));
-
-	_camera = NewObject(Camera, glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(glm::half_pi<float>(), 0.0f, 0.0f), CameraSettings(60.0f, 1024.0f / 768.0f, 0.1f, 100.0f));
-	_camera->Initialize(resourceManager);
+	spawner->GetTransform().SetPosition(glm::vec3(0.0f, 0.0f, 5.5f));
 
 	return true;
 }
@@ -118,7 +116,7 @@ void Scene::PreSimulate()
 	std::vector<Actor*>::iterator it = _actors.begin();
 	for(; it != _actors.end(); ++it)
 	{
-		if((*it)->IsEnabled())
+		if((*it)->IsEnabled() && !(*it)->IsPendingKill())
 		{
 			(*it)->PreSimulate();
 		}
@@ -130,7 +128,7 @@ void Scene::PostSimulate()
 	std::vector<Actor*>::iterator it = _actors.begin();
 	for(; it != _actors.end(); ++it)
 	{
-		if((*it)->IsEnabled())
+		if((*it)->IsEnabled() && !(*it)->IsPendingKill())
 		{
 			(*it)->PostSimulate();
 		}
@@ -142,7 +140,9 @@ void Scene::Render(Graphics* graphics)
 	std::vector<Actor*>::iterator it = _actors.begin();
 	for(; it != _actors.end(); ++it)
 	{
-		if((*it)->IsEnabled())
+		bool isEnabled = (*it)->IsEnabled();
+		bool isPendingKill = (*it)->IsPendingKill();
+		if((*it)->IsEnabled() && !(*it)->IsPendingKill())
 		{
 			(*it)->Render(*_camera, graphics, _ambientLight, _directionalLight);
 		}

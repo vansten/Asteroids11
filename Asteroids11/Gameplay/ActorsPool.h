@@ -26,7 +26,7 @@ protected:
 			return;
 		}
 
-		size_t currentSize = _objects.size();
+		size_t currentSize = _objects.capacity();
 		size_t targetSize = currentSize;
 		switch(_growthStrategy)
 		{

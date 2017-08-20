@@ -47,8 +47,8 @@ public:
 	Camera(const glm::vec3& position, const glm::vec3& rotation, const CameraSettings& settings);
 	virtual ~Camera();
 
-	virtual void Update(float deltaTime);
-	virtual void OnModelMatrixUpdated()
+	virtual void Update(float deltaTime) override;
+	virtual void OnModelMatrixUpdated() override
 	{
 		UpdateViewMatrix();
 	}

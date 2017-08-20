@@ -25,8 +25,8 @@ void AsteroidSpawner::Initialize(ResourceManager& resourceManager)
 
 	_asteroids.Initialize(GetScene(), 8);
 
-	_maxCooldown = 4.0f;
-	_minCooldown = 0.3f;
+	_maxCooldown = 3.0f;
+	_minCooldown = 0.1f;
 	_cooldownDecreaseRate = 0.1f;
 	_currentCooldown = _maxCooldown;
 	_timer = _currentCooldown - 0.5f;
