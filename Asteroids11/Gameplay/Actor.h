@@ -19,6 +19,7 @@ class PhysicalBody;
 class Graphics;
 class Light;
 class Scene;
+class Camera;
 
 class Actor
 {
@@ -50,6 +51,9 @@ public:
 	virtual void OnModelMatrixUpdated();
 
 	virtual void OnTrigger(Actor* other);
+
+	//Checks if objects bounds are visible by camera
+	bool IsVisibleByCamera() const;
 
 	Scene* GetScene() const;
 

@@ -15,7 +15,7 @@ void Asteroid::ProcessTransform(float deltaTime)
 	_transform.Rotate(_rotation * deltaTime * _speed);
 
 	//TODO: Change this check to !IsVisibleByCamera() or something like that
-	if(_transform.GetPosition().z < -5.5f)
+	if(!IsVisibleByCamera())
 	{
 		Destroy(false);
 	}

@@ -40,7 +40,7 @@ public:
 	Transform(const Transform& transform);
 	~Transform();
 
-	inline const glm::mat4& GetModelToWorldMatrix()
+	inline const glm::mat4& GetModelToWorldMatrix() const
 	{
 		return _modelMatrix;
 	}

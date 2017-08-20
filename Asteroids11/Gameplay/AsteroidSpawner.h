@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Actor.h"
+#include "ActorsPool.h"
 
 class Asteroid;
 
@@ -14,7 +15,7 @@ protected:
 
 	float _timer;
 
-	std::vector<Asteroid*> _asteroids;
+	ActorsPool<Asteroid> _asteroids;
 
 public:
 	AsteroidSpawner();

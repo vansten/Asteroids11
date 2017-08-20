@@ -13,7 +13,7 @@ void Projectile::ProcessTransform(float deltaTime)
 	position += MathHelper::Forward * deltaTime * _speed;
 	_transform.SetPosition(position);
 
-	if(position.z > 5.5f)
+	if(!IsVisibleByCamera())
 	{
 		Destroy();
 	}

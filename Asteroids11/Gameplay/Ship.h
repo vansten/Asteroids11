@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Actor.h"
+#include "ActorsPool.h"
 
 class Projectile;
 
@@ -11,7 +12,7 @@ protected:
 	float _speed;
 	bool _shoot;
 
-	std::vector<Projectile*> _projectiles;
+	ActorsPool<Projectile> _projectiles;
 
 public:
 	Ship();

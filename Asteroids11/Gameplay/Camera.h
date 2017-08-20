@@ -62,5 +62,7 @@ public:
 	{
 		return _projectionMatrix;
 	}
+
+	bool IsPointVisible(const glm::vec3& point, const glm::mat4& modelMatrix) const;
 };
 

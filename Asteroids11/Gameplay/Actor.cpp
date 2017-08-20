@@ -111,6 +111,29 @@ void Actor::OnTrigger(Actor* other)
 	//Do nothing, it's default callback
 }
 
+bool Actor::IsVisibleByCamera() const
+{
+	Scene* scene = GetScene();
+	if(!scene)
+	{
+		return false;
+	}
+
+	Camera* camera = scene->GetCamera();
+	if(!camera)
+	{
+		return false;
+	}
+
+	const glm::mat4& modelMatrix = _transform.GetModelToWorldMatrix();
+
+	//Check all corners
+	return	camera->IsPointVisible(glm::vec3(0.0f, 0.0f, 0.5f), modelMatrix) ||		//Top corner
+			camera->IsPointVisible(glm::vec3(0.0f, 0.0f, -0.5f), modelMatrix) ||	//Bottom corner
+			camera->IsPointVisible(glm::vec3(0.5f, 0.0f, 0.0f), modelMatrix) ||		//Right corner
+			camera->IsPointVisible(glm::vec3(-0.5f, 0.0f, 0.0f), modelMatrix);		//Left corner
+}
+
 Scene* Actor::GetScene() const
 {
 	return Engine::GetInstance()->GetCurrentScene();

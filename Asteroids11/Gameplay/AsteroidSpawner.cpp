@@ -11,21 +11,7 @@ AsteroidSpawner::AsteroidSpawner() : Actor()
 
 void AsteroidSpawner::SpawnAsteroid()
 {
-	Asteroid* asteroidToShoot = nullptr;
-
-	if(_asteroids.size() > 0)
-	{
-		asteroidToShoot = _asteroids.at(0);
-		_asteroids.erase(_asteroids.begin());
-	}
-	else
-	{
-		Scene* scene = GetScene();
-		if(scene)
-		{
-			asteroidToShoot = scene->SpawnActor<Asteroid>();
-		}
-	}
+	Asteroid* asteroidToShoot = _asteroids.GetObject();
 
 	if(asteroidToShoot)
 	{
@@ -37,14 +23,7 @@ void AsteroidSpawner::Initialize(ResourceManager& resourceManager)
 {
 	Actor::Initialize(resourceManager);
 
-	Scene* scene = GetScene();
-	if(scene)
-	{
-		for(int i = 0; i < 5; ++i)
-		{
-			_asteroids.push_back(scene->SpawnActor<Asteroid>());
-		}
-	}
+	_asteroids.Initialize(GetScene(), 8);
 
 	_maxCooldown = 4.0f;
 	_minCooldown = 0.3f;
@@ -67,7 +46,7 @@ void AsteroidSpawner::Update(float deltaTime)
 
 void AsteroidSpawner::ReturnAsteroid(Asteroid* asteroid, bool byProjectile)
 {
-	_asteroids.push_back(asteroid);
+	_asteroids.ReturnToPool(asteroid);
 	if(byProjectile)
 	{
 		_currentCooldown = glm::clamp(_currentCooldown - _cooldownDecreaseRate, _minCooldown, _maxCooldown);

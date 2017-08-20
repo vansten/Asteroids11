@@ -226,6 +226,7 @@
     <ClInclude Include="Gameplay\AsteroidSpawner.h" />
     <ClInclude Include="Gameplay\Projectile.h" />
     <ClInclude Include="Gameplay\Ship.h" />
+    <ClInclude Include="Gameplay\ActorsPool.h" />
     <ClInclude Include="Physics\BoxCollider.h" />
     <ClInclude Include="Gameplay\Camera.h" />
     <ClInclude Include="Physics\CapsuleCollider.h" />

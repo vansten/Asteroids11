@@ -111,6 +111,7 @@ void Engine::Run()
 		{
 			timer = 0.0f;
 			printf("Frame time: %lf, fps: %lf\n", frameTime, 1.0f / frameTime);
+			Memory::GetInstance()->PrintStatistics();
 		}
 
 		if(Input::GetKey(GLFW_KEY_F8))

@@ -24,20 +24,7 @@ void Ship::ProcessShooting()
 	{
 		_shoot = true;
 
-		Projectile* projectile = nullptr;
-		if(_projectiles.size() > 0)
-		{
-			projectile = _projectiles.at(0);
-			_projectiles.erase(_projectiles.begin());
-		}
-		else
-		{
-			Scene* scene = GetScene();
-			if(scene)
-			{
-				projectile = scene->SpawnActor<Projectile>();
-			}
-		}
+		Projectile* projectile = _projectiles.GetObject();
 
 		if(projectile)
 		{
@@ -63,14 +50,7 @@ void Ship::Initialize(ResourceManager& resourceManager)
 
 	_speed = 5.0f;
 
-	Scene* currentScene = GetScene();
-	if(currentScene)
-	{
-		for(int i = 0; i < 10; ++i)
-		{
-			_projectiles.push_back(currentScene->SpawnActor<Projectile>());
-		}
-	}
+	_projectiles.Initialize(GetScene(), 16);
 }
 
 void Ship::Update(float deltaTime)
@@ -95,5 +75,5 @@ void Ship::OnTrigger(Actor* other)
 
 void Ship::ReturnProjectile(Projectile* projectile)
 {
-	_projectiles.push_back(projectile);
+	_projectiles.ReturnToPool(projectile);
 }

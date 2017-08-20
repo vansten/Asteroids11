@@ -36,3 +36,20 @@ void Memory::PrintActualStatus() const
 	}
 	printf("\n----------------------------------------------------\n\n");
 }
+
+void Memory::PrintStatistics() const
+{
+	size_t allocatedObjectsCount = _allocatedObjects.size(); 
+	size_t wholeAllocatedSize = 0;
+	auto& it = _allocatedObjects.begin();
+	for(; it != _allocatedObjects.end(); ++it)
+	{
+		MemoryObject* mo = (*it);
+		if(mo)
+		{
+			wholeAllocatedSize += mo->_size;
+		}
+	}
+
+	printf("Memory contains %zi objects. Memory used: %zi bytes\n", allocatedObjectsCount, wholeAllocatedSize);
+}

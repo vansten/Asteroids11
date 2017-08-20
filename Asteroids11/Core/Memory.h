@@ -111,5 +111,6 @@ public:
 
 	void Shutdown();
 	void PrintActualStatus() const;
+	void PrintStatistics() const;
 };
 
