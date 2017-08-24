@@ -1,57 +1,49 @@
 #include "Scene.h"
 
 #include "Engine.h"
-#include "Input.h"
-#include "ResourceManager.h"
-#include "Gameplay/AsteroidSpawner.h"
-#include "Gameplay/Ship.h"
-#include "Physics/BoxCollider.h"
-#include "Physics/CapsuleCollider.h"
-#include "Physics/PhysicalBody.h"
-#include "Rendering/Cube.h"
-#include "Rendering/Graphics.h"
 #include "Rendering/Light.h"
-
-Scene::Scene()
-{
-
-}
-
-Scene::~Scene()
-{
-
-}
-
-bool Scene::Initialize(ResourceManager& resourceManager)
-{
-	_camera = NewObject(Camera, glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(glm::half_pi<float>(), 0.0f, 0.0f), CameraSettings(60.0f, 1024.0f / 768.0f, 0.1f, 100.0f));
-	_camera->Initialize(resourceManager);
-
-	_directionalLight = NewObject(Light);
-	_directionalLight->GetTransform().SetRotation(glm::vec3(glm::pi<float>() * 0.4f, 0.0f, 0.0f));
-	_directionalLight->SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) * 0.8f);
-
-	_ambientLight = NewObject(Light);
-	_ambientLight->SetColor(glm::vec4(0.05f, 0.05f, 0.05f, 1.0f));
-
-	Ship* ship = SpawnActor<Ship>();
-	
-	AsteroidSpawner* spawner = SpawnActor<AsteroidSpawner>();
-	spawner->GetTransform().SetPosition(glm::vec3(0.0f, 0.0f, 5.5f));
-
-	return true;
-}
 
 void Scene::Shutdown()
 {
-	std::vector<Actor*>::iterator it = _actors.begin();
-	for(; it != _actors.end(); ++it)
+	auto& uiIT = _uiActors.begin();
+	auto& uiEnd = _uiActors.end();
+	for(; uiIT != uiEnd; ++uiIT)
+	{
+		(*uiIT)->Shutdown();
+		Memory::GetInstance()->Deallocate<UIActor>(*uiIT);
+		(*uiIT) = nullptr;
+	}
+	_uiActors.clear();
+
+	uiIT = _pendingUIActors.begin();
+	uiEnd = _pendingUIActors.end();
+	for(; uiIT != _pendingUIActors.end(); ++uiIT)
+	{
+		(*uiIT)->Shutdown();
+		Memory::GetInstance()->Deallocate<UIActor>(*uiIT);
+		(*uiIT) = nullptr;
+	}
+	_pendingUIActors.clear();
+
+	auto& it = _actors.begin();
+	auto& end = _actors.end();
+	for(; it != end; ++it)
 	{
 		(*it)->Shutdown();
 		Memory::GetInstance()->Deallocate<Actor>(*it);
 		(*it) = nullptr;
 	}
 	_actors.clear();
+
+	it = _pendingActors.begin();
+	end = _pendingActors.end();
+	for(; it != end; ++it)
+	{
+		(*it)->Shutdown();
+		Memory::GetInstance()->Deallocate<Actor>(*it);
+		(*it) = nullptr;
+	}
+	_pendingActors.clear();
 
 	if(_camera)
 	{
@@ -78,11 +70,24 @@ void Scene::Update(GLfloat deltaTime)
 	if(_pendingActors.size() > 0)
 	{
 		auto& it = _pendingActors.begin();
-		for(; it != _pendingActors.end(); ++it)
+		auto& end = _pendingActors.end();
+		for(; it != end; ++it)
 		{
 			_actors.push_back((*it));
 		}
 		_pendingActors.clear();
+	}
+
+	if(_pendingUIActors.size() > 0)
+	{
+		auto& it = _pendingUIActors.begin();
+		auto& end = _pendingUIActors.end();
+		for(; it != end; ++it)
+		{
+			_uiActors.push_back((*it));
+		}
+		_pendingUIActors.clear();
+
 	}
 
 	if(_camera)
@@ -101,20 +106,29 @@ void Scene::Update(GLfloat deltaTime)
 		_directionalLight->Update();
 	}
 
-	std::vector<Actor*>::iterator it = _actors.begin();
-	for(; it != _actors.end(); ++it)
+	auto& it = _actors.begin();
+	auto& end = _actors.end();
+	for(; it != end; ++it)
 	{
 		if((*it)->IsEnabled())
 		{
 			(*it)->Update(deltaTime);
 		}
 	}
+
+	auto& uiIT = _uiActors.begin();
+	auto& uiEnd = _uiActors.end();
+	for(; uiIT != uiEnd; ++uiIT)
+	{
+		(*uiIT)->Update(deltaTime);
+	}
 }
 
 void Scene::PreSimulate()
 {
-	std::vector<Actor*>::iterator it = _actors.begin();
-	for(; it != _actors.end(); ++it)
+	auto& it = _actors.begin();
+	auto& end = _actors.end();
+	for(; it != end; ++it)
 	{
 		if((*it)->IsEnabled() && !(*it)->IsPendingKill())
 		{
@@ -125,8 +139,9 @@ void Scene::PreSimulate()
 
 void Scene::PostSimulate()
 {
-	std::vector<Actor*>::iterator it = _actors.begin();
-	for(; it != _actors.end(); ++it)
+	auto& it = _actors.begin();
+	auto& end = _actors.end();
+	for(; it != end; ++it)
 	{
 		if((*it)->IsEnabled() && !(*it)->IsPendingKill())
 		{
@@ -137,8 +152,10 @@ void Scene::PostSimulate()
 
 void Scene::Render(Graphics* graphics)
 {
-	std::vector<Actor*>::iterator it = _actors.begin();
-	for(; it != _actors.end(); ++it)
+	graphics->BeginGeometry();
+	auto& it = _actors.begin();
+	auto& end = _actors.end();
+	for(; it != end; ++it)
 	{
 		bool isEnabled = (*it)->IsEnabled();
 		bool isPendingKill = (*it)->IsPendingKill();
@@ -147,9 +164,14 @@ void Scene::Render(Graphics* graphics)
 			(*it)->Render(*_camera, graphics, _ambientLight, _directionalLight);
 		}
 	}
-}
+	graphics->EndGeometry();
 
-void Scene::Reload()
-{
-	Engine::GetInstance()->Reload();
+	graphics->BeginUI();
+	auto& uiIT = _uiActors.begin();
+	auto& uiEnd = _uiActors.end();
+	for(; uiIT != uiEnd; ++uiIT)
+	{
+		(*uiIT)->Render(*_camera, graphics);
+	}
+	graphics->EndUI();
 }

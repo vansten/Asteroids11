@@ -227,7 +227,8 @@ bool Physics::Initialize(PxTolerancesScale scale, bool bTrackAllocations)
 void Physics::Shutdown()
 {
 	auto& it = _triggerInfos.begin();
-	for(; it != _triggerInfos.end(); ++it)
+	auto& end = _triggerInfos.end();
+	for(; it != end; ++it)
 	{
 		Memory::GetInstance()->Deallocate((*it));
 	}
@@ -282,7 +283,8 @@ void Physics::Shutdown()
 void Physics::Resolve()
 {
 	auto& it = _triggerInfos.begin();
-	for(; it != _triggerInfos.end(); ++it)
+	auto& end = _triggerInfos.end();
+	for(; it != end; ++it)
 	{
 		(*it)->Report();
 		Memory::GetInstance()->Deallocate((*it));
@@ -310,7 +312,8 @@ void Physics::Reload(PxTolerancesScale scale)
 	}
 
 	auto& it = _triggerInfos.begin();
-	for(; it != _triggerInfos.end(); ++it)
+	auto& end = _triggerInfos.end();
+	for(; it != end; ++it)
 	{
 		Memory::GetInstance()->Deallocate((*it));
 		(*it) = nullptr;

@@ -101,11 +101,7 @@ void Ship::OnTrigger(Actor* other)
 
 void Ship::OnKill()
 {
-	Scene* scene = GetScene();
-	if(scene)
-	{
-		scene->Reload();
-	}
+	Engine::GetInstance()->LoadMenuScene();
 }
 
 void Ship::ReturnProjectile(Projectile* projectile)

@@ -4,6 +4,7 @@
 #include "ActorsPool.h"
 
 class Asteroid;
+class UIActor;
 
 class AsteroidSpawner : public Actor
 {
@@ -17,6 +18,9 @@ protected:
 
 	ActorsPool<Asteroid> _asteroids;
 
+	UIActor* _asteroidsCountText;
+	unsigned int _asteroidsCount;
+
 public:
 	AsteroidSpawner();
 
@@ -29,4 +33,9 @@ public:
 	virtual void Update(float deltaTime) override;
 
 	void ReturnAsteroid(Asteroid* asteroid, bool byProjectile);
+
+	inline void SetAsteroidsCountText(UIActor* asteroidsCountText)
+	{
+		_asteroidsCountText = asteroidsCountText;
+	}
 };

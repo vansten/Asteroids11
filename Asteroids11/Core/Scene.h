@@ -2,8 +2,10 @@
 
 #include <vector>
 
+#include "Engine.h"
 #include "Gameplay/Actor.h"
 #include "Gameplay/Camera.h"
+#include "Gameplay/UIActor.h"
 
 class Light;
 
@@ -12,23 +14,20 @@ class Scene
 protected:
 	std::vector<Actor*> _actors;
 	std::vector<Actor*> _pendingActors;
+	std::vector<UIActor*> _uiActors;
+	std::vector<UIActor*> _pendingUIActors;
 	Camera* _camera;
 	Light* _directionalLight;
 	Light* _ambientLight;
 
 public:
-	Scene();
-	~Scene();
-
-	bool Initialize(class ResourceManager& resourceManager);
+	virtual bool Initialize(class ResourceManager& resourceManager) = 0;
 	void Shutdown();
 
 	void Update(GLfloat deltaTime);
 	void PreSimulate();
 	void PostSimulate();
 	void Render(class Graphics* graphics);
-
-	void Reload();
 
 	inline Camera* GetCamera() const
 	{
@@ -45,6 +44,16 @@ public:
 		actor->Initialize(Engine::GetInstance()->GetResourceManager());
 		_pendingActors.push_back(actor);
 		return actor;
+	}
+
+	template<typename T>
+	T* SpawnUIActor(const glm::vec2& screenPosition)
+	{
+		T* uiActor = NewObject(T);
+		uiActor->GetTransform().SetScreenPosition(screenPosition);
+		uiActor->Initialize(Engine::GetInstance()->GetResourceManager());
+		_pendingUIActors.push_back(uiActor);
+		return uiActor;
 	}
 };
 

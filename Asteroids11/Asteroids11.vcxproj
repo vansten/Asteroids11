@@ -73,18 +73,20 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(SolutionDir)ThirdParty\Include\FreeType\;$(SolutionDir)ThirdParty\Include\FreeType\freetype2;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)ThirdParty\Include\FreeType\;$(SolutionDir)ThirdParty\Include\FreeType\freetype2;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SolutionDir)ThirdParty\Include\FreeType\;$(SolutionDir)ThirdParty\Include\FreeType\freetype2;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)ThirdParty\Include\FreeType\;$(SolutionDir)ThirdParty\Include\FreeType\freetype2;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -188,6 +190,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Core\UITransform.cpp" />
     <ClCompile Include="Gameplay\Actor.cpp" />
     <ClCompile Include="Audio\Audio.cpp" />
     <ClCompile Include="Audio\AudioClip.cpp" />
@@ -195,13 +198,18 @@
     <ClCompile Include="Gameplay\Asteroid.cpp" />
     <ClCompile Include="Gameplay\AsteroidSpawner.cpp" />
     <ClCompile Include="Gameplay\Projectile.cpp" />
+    <ClCompile Include="Gameplay\Scenes\GameplayScene.cpp" />
+    <ClCompile Include="Gameplay\Scenes\MenuScene.cpp" />
     <ClCompile Include="Gameplay\Ship.cpp" />
+    <ClCompile Include="Gameplay\ShootToStartActor.cpp" />
+    <ClCompile Include="Gameplay\UIActor.cpp" />
     <ClCompile Include="Physics\BoxCollider.cpp" />
     <ClCompile Include="Gameplay\Camera.cpp" />
     <ClCompile Include="Physics\CapsuleCollider.cpp" />
     <ClCompile Include="Physics\Collider.cpp" />
     <ClCompile Include="Rendering\Cube.cpp" />
     <ClCompile Include="Core\Engine.cpp" />
+    <ClCompile Include="Rendering\FontRenderer.cpp" />
     <ClCompile Include="Rendering\Graphics.cpp" />
     <ClCompile Include="Core\Input.cpp" />
     <ClCompile Include="main.cpp" />
@@ -218,6 +226,7 @@
     <ClCompile Include="Core\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Core\UITransform.h" />
     <ClInclude Include="Gameplay\Actor.h" />
     <ClInclude Include="Audio\Audio.h" />
     <ClInclude Include="Audio\AudioClip.h" />
@@ -225,14 +234,19 @@
     <ClInclude Include="Gameplay\Asteroid.h" />
     <ClInclude Include="Gameplay\AsteroidSpawner.h" />
     <ClInclude Include="Gameplay\Projectile.h" />
+    <ClInclude Include="Gameplay\Scenes\GameplayScene.h" />
+    <ClInclude Include="Gameplay\Scenes\MenuScene.h" />
     <ClInclude Include="Gameplay\Ship.h" />
     <ClInclude Include="Gameplay\ActorsPool.h" />
+    <ClInclude Include="Gameplay\ShootToStartActor.h" />
+    <ClInclude Include="Gameplay\UIActor.h" />
     <ClInclude Include="Physics\BoxCollider.h" />
     <ClInclude Include="Gameplay\Camera.h" />
     <ClInclude Include="Physics\CapsuleCollider.h" />
     <ClInclude Include="Physics\Collider.h" />
     <ClInclude Include="Rendering\Cube.h" />
     <ClInclude Include="Core\Engine.h" />
+    <ClInclude Include="Rendering\FontRenderer.h" />
     <ClInclude Include="Rendering\Graphics.h" />
     <ClInclude Include="Core\Input.h" />
     <ClInclude Include="Core\MathHelper.h" />
@@ -246,6 +260,10 @@
     <ClInclude Include="Rendering\MeshRenderer.h" />
     <ClInclude Include="Rendering\Shader.h" />
     <ClInclude Include="Core\Transform.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Shaders\fontFS.glsl" />
+    <None Include="Assets\Shaders\fontVS.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

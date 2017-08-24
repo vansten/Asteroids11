@@ -4,7 +4,8 @@
 #include "Physics/Physics.h"
 #include "Audio/Audio.h"
 #include "ResourceManager.h"
-#include "Scene.h"
+
+class Scene;
 
 class Engine
 {
@@ -28,8 +29,7 @@ protected:
 	Audio* _audio;
 	Scene* _currentScene;
 	ResourceManager _resourceManager;
-
-	bool _shouldReload;
+	Scene* _nextScene;
 
 protected:
 	bool ShouldQuit() const;
@@ -42,10 +42,8 @@ public:
 	void Run();
 	void Shutdown();
 
-	inline void Reload()
-	{
-		_shouldReload = true;
-	}
+	void LoadGameplayScene();
+	void LoadMenuScene();
 
 	inline Graphics& GetGraphics()
 	{
@@ -67,8 +65,9 @@ public:
 		return _resourceManager;
 	}
 
-	inline Scene* GetCurrentScene()
+	inline Scene* GetScene()
 	{
-		return _currentScene;
+		//Return _nextScene if it's not null cause in this case it's the _nextScene where should new actors be spawned
+		return _nextScene ? _nextScene : _currentScene;
 	}
 };

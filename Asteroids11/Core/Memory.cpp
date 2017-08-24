@@ -8,17 +8,7 @@ void Memory::Shutdown()
 	{
 		return;
 	}
-	printf("----------------------------------------------------\nTHERE ARE DEALLOCATED OBJECTS\n\n");
-	auto& it = _allocatedObjects.begin();
-	for(; it != _allocatedObjects.end(); ++it)
-	{
-		MemoryObject* mo = (*it);
-		if(mo)
-		{
-			printf("MemoryObject at %p, size: %zi \t allocation place: %s, type: %s\n", mo->_memory, mo->_size, mo->_allocationPlace.c_str(), mo->_typeName.c_str());
-		}
-	}
-	printf("\n----------------------------------------------------\n\n");
+	PrintActualStatus();
 	system("pause");
 }
 
@@ -26,7 +16,8 @@ void Memory::PrintActualStatus() const
 {
 	printf("----------------------------------------------------\nACTUAL MEMORY STATUS\n\n");
 	auto& it = _allocatedObjects.begin();
-	for(; it != _allocatedObjects.end(); ++it)
+	auto& end = _allocatedObjects.end();
+	for(; it != end; ++it)
 	{
 		MemoryObject* mo = (*it);
 		if(mo)
@@ -42,7 +33,8 @@ void Memory::PrintStatistics() const
 	size_t allocatedObjectsCount = _allocatedObjects.size(); 
 	size_t wholeAllocatedSize = 0;
 	auto& it = _allocatedObjects.begin();
-	for(; it != _allocatedObjects.end(); ++it)
+	auto& end = _allocatedObjects.end();
+	for(; it != end; ++it)
 	{
 		MemoryObject* mo = (*it);
 		if(mo)

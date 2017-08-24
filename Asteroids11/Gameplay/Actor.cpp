@@ -2,6 +2,7 @@
 
 #include "Camera.h"
 #include "Core/Engine.h"
+#include "Core/Scene.h"
 #include "Physics/Collider.h"
 #include "Physics/PhysicalBody.h"
 #include "Rendering/Light.h"
@@ -35,7 +36,8 @@ void Actor::Initialize(ResourceManager& resourceManager)
 void Actor::Shutdown()
 {
 	auto& it = _colliders.begin();
-	for(; it != _colliders.end(); ++it)
+	auto& end = _colliders.end();
+	for(; it != end; ++it)
 	{
 		Memory::GetInstance()->Deallocate<Collider>((*it));
 	}
@@ -54,7 +56,8 @@ void Actor::Shutdown()
 	}
 
 	auto& audioSourceIT = _audioSources.begin();
-	for(; audioSourceIT != _audioSources.end(); ++audioSourceIT)
+	auto& audioSourceEnd = _audioSources.end();
+	for(; audioSourceIT != audioSourceEnd; ++audioSourceIT)
 	{
 		Memory::GetInstance()->Deallocate<AudioSource>((*audioSourceIT));
 	}
@@ -129,7 +132,8 @@ void Actor::SetTransform(const Transform& transform)
 void Actor::UpdateSize(const glm::vec3& newScale)
 {
 	auto& it = _colliders.begin();
-	for(; it != _colliders.end(); ++it)
+	auto& end = _colliders.end();
+	for(; it != end; ++it)
 	{
 		(*it)->UpdateSize(newScale);
 	}
@@ -175,7 +179,7 @@ bool Actor::IsVisibleByCamera() const
 
 Scene* Actor::GetScene() const
 {
-	return Engine::GetInstance()->GetCurrentScene();
+	return Engine::GetInstance()->GetScene();
 }
 
 PhysicalBody* Actor::CreateRigidbody(bool useGravity)

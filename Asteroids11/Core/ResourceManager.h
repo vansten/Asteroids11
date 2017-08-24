@@ -21,7 +21,8 @@ protected:
 	void ClearResources(std::vector<T*> resources)
 	{
 		auto& it = resources.begin();
-		for(; it != resources.end(); ++it)
+		auto& end = resources.end();
+		for(; it != end; ++it)
 		{
 			Memory::GetInstance()->Deallocate<T>(*it);
 			(*it) = nullptr;
@@ -33,7 +34,8 @@ protected:
 	void ClearResourcesShutdown(std::vector<T*> resources)
 	{
 		auto& it = resources.begin();
-		for(; it != resources.end(); ++it)
+		auto& end = resources.end();
+		for(; it != end; ++it)
 		{
 			(*it)->Shutdown();
 			Memory::GetInstance()->Deallocate<T>(*it);

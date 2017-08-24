@@ -69,8 +69,9 @@ public:
 	void Deallocate(T* ptr)
 	{
 		auto& it = _allocatedObjects.begin();
+		auto& end = _allocatedObjects.end();
 		int size = 0;
-		for(; it != _allocatedObjects.end(); ++it)
+		for(; it != end; ++it)
 		{
 			MemoryObject* mo = (*it);
 			if(mo->_memory == ptr)
@@ -91,8 +92,9 @@ public:
 	void Deallocate(void* ptr)
 	{
 		auto& it = _allocatedObjects.begin();
+		auto& end = _allocatedObjects.end();
 		int size = 0;
-		for(; it != _allocatedObjects.end(); ++it)
+		for(; it != end; ++it)
 		{
 			MemoryObject* mo = (*it);
 			if(mo->_memory == ptr)

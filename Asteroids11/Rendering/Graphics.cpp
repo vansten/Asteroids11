@@ -2,7 +2,9 @@
 
 #include <stdio.h>
 
+#include "Core/UITransform.h"
 #include "Gameplay/Camera.h"
+#include "FontRenderer.h"
 #include "Light.h"
 
 Graphics::Graphics()
@@ -27,6 +29,7 @@ bool Graphics::Initialize()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
 	_window = glfwCreateWindow(1024, 768, "Asteroids11", nullptr, nullptr);
 
@@ -44,14 +47,17 @@ bool Graphics::Initialize()
 		printf("Failed to initialize GLEW\n");
 		return false;
 	}
-	
+
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDepthFunc(GL_LEQUAL);
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);	//Disable byte-aligment restriction
 
 	glGenVertexArrays(1, &_vao);
 	glBindVertexArray(_vao);
-
 	return true;
 }
 
@@ -63,19 +69,38 @@ void Graphics::Shutdown()
 	glfwTerminate();
 }
 
-void Graphics::BeginDraw()
+void Graphics::Clear()
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void Graphics::Present()
+{
+	glfwSwapBuffers(_window);
+}
+
+void Graphics::BeginGeometry()
 {
 	_lastProgramID = -1;
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 }
 
-void Graphics::EndDraw()
+void Graphics::EndGeometry()
 {
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
-	glfwSwapBuffers(_window);
+}
+
+void Graphics::BeginUI()
+{
+	_lastProgramID = -1;
+	glEnableVertexAttribArray(0);
+}
+
+void Graphics::EndUI()
+{
+	glDisableVertexAttribArray(0);
 }
 
 void Graphics::DrawIndexed(const Camera& camera, Light* ambientLight, Light* directionalLight, const glm::mat4& modelMatrix, const glm::vec4& color, GLuint vertexBuffer, GLuint indexBuffer, GLuint normalBuffer, GLsizeiptr indicesCount)
@@ -130,6 +155,56 @@ void Graphics::DrawIndexed(const Camera& camera, Light* ambientLight, Light* dir
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 	glDrawElements(GL_TRIANGLES, (GLsizei) indicesCount, GL_UNSIGNED_INT, (void*)0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void Graphics::DrawText(const Camera& camera, const std::string& text, const UITransform& uiTransform, const glm::vec4& textColor, GLuint vertexBufferIndex)
+{
+	GLuint textColorID = glGetUniformLocation(_lastProgramID, "textColor");
+	glUniform4fv(textColorID, 1, &textColor[0]);
+	glActiveTexture(GL_TEXTURE0);
+
+	GLuint projectionID = glGetUniformLocation(_lastProgramID, "projection");
+	const glm::mat4& projection = camera.GetUIProjectionMatrix();
+	glUniformMatrix4fv(projectionID, 1, GL_FALSE, &projection[0][0]);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferIndex);
+
+	glm::vec2 position = uiTransform.GetScreenPosition();
+	const glm::vec2& size = uiTransform.GetSize();
+
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
+	size_t stringSize = text.size();
+	GLchar c;
+	for(size_t i = 0; i < stringSize; ++i)
+	{
+		c = text[i];
+		Character character = FontHelper::CharacterSet[c];
+
+		GLfloat xPos = position.x + character.Bearing.x * size.x;
+		GLfloat yPos = position.y + (character.Size.y - character.Bearing.y) * size.y;
+
+		GLfloat width = character.Size.x * size.x;
+		GLfloat height = character.Size.y * size.y;
+
+		glm::vec4 vertices[6] = {
+			glm::vec4(xPos, yPos + height, 0.0, 0.0),
+			glm::vec4(xPos, yPos, 0.0, 1.0),
+			glm::vec4(xPos + width, yPos, 1.0, 1.0),
+			
+			glm::vec4(xPos, yPos + height, 0.0, 0.0),
+			glm::vec4(xPos + width, yPos, 1.0, 1.0),
+			glm::vec4(xPos + width, yPos + height, 1.0, 0.0),
+		};
+		glBindTexture(GL_TEXTURE_2D, character.TextureID);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+		
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		position.x += (character.Advance >> 6) * size.x;
+	}
 }
 
 void Graphics::SetShader(GLuint id)

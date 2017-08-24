@@ -4,7 +4,7 @@
 #include "Core/Engine.h"
 #include "Core/Scene.h"
 
-AsteroidSpawner::AsteroidSpawner() : Actor()
+AsteroidSpawner::AsteroidSpawner() : Actor(), _asteroidsCountText(nullptr)
 {
 
 }
@@ -30,6 +30,8 @@ void AsteroidSpawner::Initialize(ResourceManager& resourceManager)
 	_cooldownDecreaseRate = 0.1f;
 	_currentCooldown = _maxCooldown;
 	_timer = _currentCooldown - 0.5f;
+
+	_asteroidsCount = 0;
 }
 
 void AsteroidSpawner::Update(float deltaTime)
@@ -50,5 +52,10 @@ void AsteroidSpawner::ReturnAsteroid(Asteroid* asteroid, bool byProjectile)
 	if(byProjectile)
 	{
 		_currentCooldown = glm::clamp(_currentCooldown - _cooldownDecreaseRate, _minCooldown, _maxCooldown);
+		_asteroidsCount += 1;
+		if(_asteroidsCountText)
+		{
+			_asteroidsCountText->SetText(std::to_string(_asteroidsCount));
+		}
 	}
 }

@@ -2,6 +2,8 @@
 
 #include "Input.h"
 #include "MathHelper.h"
+#include "Gameplay/Scenes/GameplayScene.h"
+#include "Gameplay/Scenes/MenuScene.h"
 
 Engine* Engine::_instance = nullptr;
 
@@ -10,7 +12,7 @@ bool Engine::ShouldQuit() const
 	return Input::GetKey(GLFW_KEY_ESCAPE) || glfwWindowShouldClose(_graphics->GetWindow()) != 0;
 }
 
-Engine::Engine() : _currentScene(nullptr), _graphics(nullptr), _physics(nullptr), _audio(nullptr)
+Engine::Engine() : _currentScene(nullptr), _graphics(nullptr), _physics(nullptr), _audio(nullptr), _nextScene(nullptr)
 {
 	if(_instance != nullptr)
 	{
@@ -56,7 +58,7 @@ bool Engine::Initialize()
 		return false;
 	}
 
-	_currentScene = NewObject(Scene);
+	_currentScene = NewObject(MenuScene);
 	if(!_currentScene->Initialize(_resourceManager))
 	{
 		printf("Cannot initialize scene\n");
@@ -64,8 +66,6 @@ bool Engine::Initialize()
 	}
 
 	PhysicsHelper::SetPhysics(_physics);
-
-	_shouldReload = false;
 
 	return true;
 }
@@ -78,13 +78,14 @@ void Engine::Run()
 	double timer = 0.0f;
 	while(!ShouldQuit())
 	{
-		if(_shouldReload)
+		if(_nextScene)
 		{
 			_physics->Reload();
 			_currentScene->Shutdown();
+			Memory::GetInstance()->Deallocate<Scene>(_currentScene);
+			_currentScene = _nextScene;
 			_currentScene->Initialize(_resourceManager);
-			_shouldReload = false;
-			continue;
+			_nextScene = nullptr;
 		}
 
 		_currentScene->PreSimulate();
@@ -96,11 +97,11 @@ void Engine::Run()
 
 		_audio->Update((float)frameTime);
 
-		_graphics->BeginDraw();
+		_graphics->Clear();
 
 		_currentScene->Render(_graphics);
 
-		_graphics->EndDraw();
+		_graphics->Present();
 
 		glfwPollEvents();
 
@@ -117,6 +118,12 @@ void Engine::Run()
 		if(Input::GetKey(GLFW_KEY_F8))
 		{
 			Memory::GetInstance()->PrintActualStatus();
+		}
+
+		if(Input::GetKey(GLFW_KEY_F9))
+		{
+			PxU32 actorsCount = _physics->GetScene()->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
+			printf("Physx actors: %d\n", actorsCount);
 		}
 	}
 }
@@ -153,7 +160,24 @@ void Engine::Shutdown()
 		_currentScene = nullptr;
 	}
 
+	if(_nextScene)
+	{
+		_nextScene->Shutdown();
+		Memory::GetInstance()->Deallocate<Scene>(_nextScene);
+		_nextScene = nullptr;
+	}
+
 	Input::Shutdown();
 
 	_resourceManager.Shutdown();
+}
+
+void Engine::LoadGameplayScene()
+{
+	_nextScene = NewObject(GameplayScene);
+}
+
+void Engine::LoadMenuScene()
+{
+	_nextScene = NewObject(MenuScene);
 }

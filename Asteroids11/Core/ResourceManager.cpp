@@ -21,9 +21,10 @@ void ResourceManager::Shutdown()
 Shader* ResourceManager::GetShader(const std::string& vertexShader, const std::string& fragmentShader)
 {
 	std::string key = "Assets/" + vertexShader + "_Assets/" + fragmentShader;
-	std::vector<Shader*>::iterator it = _shaders.begin();
 
-	for(; it != _shaders.end(); ++it)
+	auto& it = _shaders.begin();
+	auto& end = _shaders.end();
+	for(; it != end; ++it)
 	{
 		std::string shaderKey = (*it)->GetVertexShaderFilename() + "_" + (*it)->GetFragmentShaderFilename();
 		if(key.compare(shaderKey) == 0)
@@ -41,8 +42,10 @@ Shader* ResourceManager::GetShader(const std::string& vertexShader, const std::s
 AudioClip* ResourceManager::GetAudioClip(const std::string& wavFileName)
 {
 	std::string compareKey = "Assets/" + wavFileName;
-	std::vector<AudioClip*>::iterator it = _audioClips.begin();
-	for(; it != _audioClips.end(); ++it)
+
+	auto& it = _audioClips.begin();
+	auto& end = _audioClips.end();
+	for(; it != end; ++it)
 	{
 		if(wavFileName.compare((*it)->GetWAVFileName()) == 0)
 		{
@@ -58,8 +61,9 @@ AudioClip* ResourceManager::GetAudioClip(const std::string& wavFileName)
 
 Mesh* ResourceManager::GetMesh(const std::string& meshName)
 {
-	std::vector<Mesh*>::iterator it = _meshes.begin();
-	for(; it != _meshes.end(); ++it)
+	auto& it = _meshes.begin();
+	auto& end = _meshes.end();
+	for(; it != end; ++it)
 	{
 		if(meshName.compare((*it)->GetName()) == 0)
 		{
