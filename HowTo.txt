@@ -13,3 +13,4 @@ A - move left
 D - move right
 Space - shoot
 F8 - toggle stats
+Escape - quit
