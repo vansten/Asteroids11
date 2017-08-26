@@ -55,7 +55,9 @@ void Shader::Initialize()
 	GLint result = GL_FALSE;
 	GLint infoLogLength;
 
+#if defined(_DEBUG) || defined(DEBUG)
 	printf("Compiling shader %s\n", _vertexShaderFilename.c_str());
+#endif
 	char const* vertexSourcePtr = vertexShaderCode.c_str();
 	glShaderSource(vertexShaderID, 1, &vertexSourcePtr, nullptr);
 	glCompileShader(vertexShaderID);
@@ -70,7 +72,9 @@ void Shader::Initialize()
 		return;
 	}
 
+#if defined(_DEBUG) || defined(DEBUG)
 	printf("Compiling shader %s\n", _fragmentShaderFilename.c_str());
+#endif
 	char const* fragmentSourcePtr = fragmentShaderCode.c_str();
 	glShaderSource(fragmentShaderID, 1, &fragmentSourcePtr, nullptr);
 	glCompileShader(fragmentShaderID);
@@ -85,7 +89,9 @@ void Shader::Initialize()
 		return;
 	}
 
+#if defined(_DEBUG) || defined(DEBUG)
 	printf("Linking program\n");
+#endif
 
 	_programID = glCreateProgram();
 	glAttachShader(_programID, vertexShaderID);

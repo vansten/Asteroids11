@@ -39,5 +39,10 @@ public:
 
 		return from + delta;
 	}
+
+	inline static glm::vec4 LerpVec4(const glm::vec4& from, const glm::vec4& to, float t)
+	{
+		return from + (to - from) * t;
+	}
 };
 

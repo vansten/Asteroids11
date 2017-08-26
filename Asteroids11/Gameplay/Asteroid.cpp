@@ -32,16 +32,10 @@ void Asteroid::Initialize(ResourceManager& resourceManager)
 		MathHelper::RandomRange(0.35f, 0.65f),
 		1.0f
 	));
-	glm::vec3 scale(
-		MathHelper::RandomRange(0.2f, 0.6f),
-		MathHelper::RandomRange(0.05f, 0.15f),
-		MathHelper::RandomRange(0.2f, 0.6f)
-	);
-	_transform.SetScale(scale);
 
 	_type = ASTEROID_TYPE;
 
-	AddCollider(NewObject(BoxCollider, this, true, scale));
+	AddCollider(NewObject(BoxCollider, this, true, glm::vec3(1.0f, 1.0f, 1.0f)));
 	CreateRigidbody(false);
 
 	_destroyAS = CreateAudioSource(resourceManager.GetAudioClip("Audio/asteroidDestroy.wav"));
@@ -73,6 +67,12 @@ void Asteroid::Shoot(AsteroidSpawner* spawner, const glm::vec3& initialPosition,
 		glm::radians(MathHelper::RandomRange(-60.0f, 60.0f)),
 		glm::radians(MathHelper::RandomRange(-60.0f, 60.0f))
 	);
+	glm::vec3 scale(
+		MathHelper::RandomRange(0.2f, 1.2f),
+		MathHelper::RandomRange(0.05f, 0.15f),
+		MathHelper::RandomRange(0.2f, 1.2f)
+	);
+	_transform.SetScale(scale);
 	_speed = speed;
 	SetEnabled(true);
 }

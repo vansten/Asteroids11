@@ -4,12 +4,14 @@ Memory* Memory::_instance = nullptr;
 
 void Memory::Shutdown()
 {
+#if defined(_DEBUG) || defined(DEBUG)
 	if(_allocatedObjects.size() <= 0)
 	{
 		return;
 	}
 	PrintActualStatus();
 	system("pause");
+#endif
 }
 
 void Memory::PrintActualStatus() const
@@ -44,4 +46,27 @@ void Memory::PrintStatistics() const
 	}
 
 	printf("Memory contains %zi objects. Memory used: %zi bytes\n", allocatedObjectsCount, wholeAllocatedSize);
+}
+
+unsigned int Memory::GetObjectsCount() const
+{
+	return (unsigned int)_allocatedObjects.size();
+}
+
+unsigned int Memory::GetMemoryAllocated() const
+{
+	size_t allocatedObjectsCount = _allocatedObjects.size();
+	size_t wholeAllocatedSize = 0;
+	auto& it = _allocatedObjects.begin();
+	auto& end = _allocatedObjects.end();
+	for(; it != end; ++it)
+	{
+		MemoryObject* mo = (*it);
+		if(mo)
+		{
+			wholeAllocatedSize += mo->_size;
+		}
+	}
+
+	return (unsigned int)wholeAllocatedSize;
 }

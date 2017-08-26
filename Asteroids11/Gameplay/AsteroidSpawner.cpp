@@ -32,6 +32,11 @@ void AsteroidSpawner::Initialize(ResourceManager& resourceManager)
 	_timer = _currentCooldown - 0.5f;
 
 	_asteroidsCount = 0;
+
+	_asteroidDestroyedTimer = 0.0f;
+
+	_normalColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	_enlargedColor = glm::vec4(0.7f, 0.2f, 0.05f, 1.0f);
 }
 
 void AsteroidSpawner::Update(float deltaTime)
@@ -43,6 +48,21 @@ void AsteroidSpawner::Update(float deltaTime)
 	{
 		SpawnAsteroid();
 		_timer = 0.0f;
+	}
+
+	if(_asteroidDestroyedTimer > 0.0f)
+	{
+		_asteroidDestroyedTimer -= deltaTime;
+		if(_asteroidDestroyedTimer <= 0.0f)
+		{
+			_asteroidDestroyedTimer = 0.0f;
+		}
+
+		if(_asteroidsCountText)
+		{
+			_asteroidsCountText->SetFontSize(20 + (unsigned int)(10 * _asteroidDestroyedTimer));
+			_asteroidsCountText->SetColor(MathHelper::LerpVec4(_normalColor, _enlargedColor, _asteroidDestroyedTimer));
+		}
 	}
 }
 
@@ -57,5 +77,6 @@ void AsteroidSpawner::ReturnAsteroid(Asteroid* asteroid, bool byProjectile)
 		{
 			_asteroidsCountText->SetText(std::to_string(_asteroidsCount));
 		}
+		_asteroidDestroyedTimer = 1.0f;
 	}
 }

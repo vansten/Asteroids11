@@ -16,15 +16,6 @@ struct Character
 	GLuint Advance;
 };
 
-class FontHelper
-{
-public:
-	static std::map<GLuint, Character> CharacterSet;
-
-public:
-	static void Initialize(FT_Face& fontFace);
-};
-
 class FontRenderer
 {
 protected:
@@ -34,8 +25,14 @@ protected:
 
 	GLuint _vertexBufferIndex;
 	glm::vec4 _textColor;
+	GLuint _fontSize;
 
 	std::string _text;
+
+	std::map<GLuint, Character> _characterSet;
+
+protected:
+	void InitializeCharacterSet();
 
 public:
 	void Initialize(class ResourceManager& resourceManager, const std::string& fontName);
@@ -45,8 +42,9 @@ public:
 
 	inline void SetFontSize(unsigned int fontSize)
 	{
+		_fontSize = fontSize;
 		FT_Set_Pixel_Sizes(_fontFace, 0, fontSize);
-		FontHelper::Initialize(_fontFace);
+		InitializeCharacterSet();
 	}
 
 	inline void SetText(const std::string& text)

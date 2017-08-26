@@ -20,6 +20,9 @@ protected:
 
 	UIActor* _asteroidsCountText;
 	unsigned int _asteroidsCount;
+	float _asteroidDestroyedTimer;
+	glm::vec4 _normalColor;
+	glm::vec4 _enlargedColor;
 
 public:
 	AsteroidSpawner();

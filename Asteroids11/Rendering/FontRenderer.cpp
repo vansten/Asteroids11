@@ -8,20 +8,18 @@
 
 #pragma comment(lib, "freetype271.lib")
 
-std::map<GLuint, Character> FontHelper::CharacterSet;
-
-void FontHelper::Initialize(FT_Face& fontFace)
+void FontRenderer::InitializeCharacterSet()
 {
 	for(GLubyte c = 0; c < 128; ++c)
 	{
-		if(CharacterSet.find(c) != CharacterSet.end())
+		if(_characterSet.find(c) != _characterSet.end())
 		{
-			glDeleteTextures(1, &CharacterSet[c].TextureID);
-			CharacterSet[c].TextureID = 0;
-			CharacterSet.erase(CharacterSet.find(c));
+			glDeleteTextures(1, &_characterSet[c].TextureID);
+			_characterSet[c].TextureID = 0;
+			_characterSet.erase(_characterSet.find(c));
 		}
 
-		if(FT_Load_Char(fontFace, c, FT_LOAD_RENDER))
+		if(FT_Load_Char(_fontFace, c, FT_LOAD_RENDER))
 		{
 			printf("Error loading character: %c", c);
 			continue;
@@ -34,12 +32,12 @@ void FontHelper::Initialize(FT_Face& fontFace)
 			GL_TEXTURE_2D,
 			0,
 			GL_RED,	//Cause generated bitmap is 8-bit grayscale
-			fontFace->glyph->bitmap.width,
-			fontFace->glyph->bitmap.rows,
+			_fontFace->glyph->bitmap.width,
+			_fontFace->glyph->bitmap.rows,
 			0,
 			GL_RED,	//Cause generated bitmap is 8-bit grayscale
 			GL_UNSIGNED_BYTE,
-			fontFace->glyph->bitmap.buffer
+			_fontFace->glyph->bitmap.buffer
 		);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -48,10 +46,10 @@ void FontHelper::Initialize(FT_Face& fontFace)
 
 		Character character;
 		character.TextureID = texture;
-		character.Size = glm::ivec2(fontFace->glyph->bitmap.width, fontFace->glyph->bitmap.rows);
-		character.Bearing = glm::ivec2(fontFace->glyph->bitmap_left, fontFace->glyph->bitmap_top);
-		character.Advance = fontFace->glyph->advance.x;
-		CharacterSet.insert(std::pair<GLchar, Character>(c, character));
+		character.Size = glm::ivec2(_fontFace->glyph->bitmap.width, _fontFace->glyph->bitmap.rows);
+		character.Bearing = glm::ivec2(_fontFace->glyph->bitmap_left, _fontFace->glyph->bitmap_top);
+		character.Advance = _fontFace->glyph->advance.x;
+		_characterSet.insert(std::pair<GLchar, Character>(c, character));
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -92,5 +90,5 @@ void FontRenderer::Shutdown()
 void FontRenderer::Render(const Camera& camera, Graphics* graphics, const UITransform& uiTransform)
 {
 	graphics->SetShader(_fontShader->GetProgramID());
-	graphics->DrawText(camera, _text, uiTransform, _textColor, _vertexBufferIndex);
+	graphics->DrawText(camera, _text, _characterSet, uiTransform, _textColor, _fontSize, _vertexBufferIndex);
 }

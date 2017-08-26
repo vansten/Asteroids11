@@ -114,5 +114,8 @@ public:
 	void Shutdown();
 	void PrintActualStatus() const;
 	void PrintStatistics() const;
+
+	unsigned int GetObjectsCount() const;
+	unsigned int GetMemoryAllocated() const;
 };
 

@@ -62,7 +62,7 @@ void Ship::Initialize(ResourceManager& resourceManager)
 
 	_type = SHIP_TYPE;
 
-	_speed = 10.0f;
+	_speed = 8.0f;
 
 	_projectiles.Initialize(GetScene(), 16);
 

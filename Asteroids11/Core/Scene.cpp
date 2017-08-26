@@ -44,7 +44,7 @@ void Scene::Shutdown()
 		(*it) = nullptr;
 	}
 	_pendingActors.clear();
-
+	
 	if(_camera)
 	{
 		_camera->Shutdown();
@@ -173,5 +173,6 @@ void Scene::Render(Graphics* graphics)
 	{
 		(*uiIT)->Render(*_camera, graphics);
 	}
+
 	graphics->EndUI();
 }

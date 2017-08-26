@@ -6,6 +6,7 @@
 #include "ResourceManager.h"
 
 class Scene;
+class UIActor;
 
 class Engine
 {
@@ -31,8 +32,12 @@ protected:
 	ResourceManager _resourceManager;
 	Scene* _nextScene;
 
+	UIActor* _statisticsActor;
+
 protected:
 	bool ShouldQuit() const;
+
+	void FillStatisticsText(float frameTime);
 
 public:
 	Engine();

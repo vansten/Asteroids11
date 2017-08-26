@@ -4,7 +4,6 @@
 
 #include "Core/UITransform.h"
 #include "Gameplay/Camera.h"
-#include "FontRenderer.h"
 #include "Light.h"
 
 Graphics::Graphics()
@@ -31,7 +30,10 @@ bool Graphics::Initialize()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-	_window = glfwCreateWindow(1024, 768, "Asteroids11", nullptr, nullptr);
+	_screenSettings.Width = 800.0f;
+	_screenSettings.Height = 600.0f;
+
+	_window = glfwCreateWindow((int)_screenSettings.Width, (int)_screenSettings.Height, "Asteroids11", nullptr, nullptr);
 
 	if(!_window)
 	{
@@ -160,7 +162,7 @@ void Graphics::DrawIndexed(const Camera& camera, Light* ambientLight, Light* dir
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void Graphics::DrawText(const Camera& camera, const std::string& text, const UITransform& uiTransform, const glm::vec4& textColor, GLuint vertexBufferIndex)
+void Graphics::DrawText(const Camera& camera, const std::string& text, std::map<GLuint, Character>& characterSet, const UITransform& uiTransform, const glm::vec4& textColor, GLuint fontSize, GLuint vertexBufferIndex)
 {
 	GLuint textColorID = glGetUniformLocation(_lastProgramID, "textColor");
 	glUniform4fv(textColorID, 1, &textColor[0]);
@@ -181,29 +183,37 @@ void Graphics::DrawText(const Camera& camera, const std::string& text, const UIT
 	for(size_t i = 0; i < stringSize; ++i)
 	{
 		c = text[i];
-		Character character = FontHelper::CharacterSet[c];
+		if(c == '\n')
+		{
+			position.x = uiTransform.GetScreenPosition().x;
+			position.y -= fontSize;
+		}
+		else
+		{
+			Character character = characterSet[c];
 
-		GLfloat xPos = position.x + character.Bearing.x * size.x;
-		GLfloat yPos = position.y + (character.Size.y - character.Bearing.y) * size.y;
+			GLfloat xPos = position.x + character.Bearing.x * size.x;
+			GLfloat yPos = position.y - (character.Size.y - character.Bearing.y) * size.y;
 
-		GLfloat width = character.Size.x * size.x;
-		GLfloat height = character.Size.y * size.y;
+			GLfloat width = character.Size.x * size.x;
+			GLfloat height = character.Size.y * size.y;
 
-		glm::vec4 vertices[6] = {
-			glm::vec4(xPos, yPos + height, 0.0, 0.0),
-			glm::vec4(xPos, yPos, 0.0, 1.0),
-			glm::vec4(xPos + width, yPos, 1.0, 1.0),
-			
-			glm::vec4(xPos, yPos + height, 0.0, 0.0),
-			glm::vec4(xPos + width, yPos, 1.0, 1.0),
-			glm::vec4(xPos + width, yPos + height, 1.0, 0.0),
-		};
-		glBindTexture(GL_TEXTURE_2D, character.TextureID);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-		
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+			glm::vec4 vertices[6] = {
+				glm::vec4(xPos, yPos + height, 0.0, 0.0),
+				glm::vec4(xPos, yPos, 0.0, 1.0),
+				glm::vec4(xPos + width, yPos, 1.0, 1.0),
 
-		position.x += (character.Advance >> 6) * size.x;
+				glm::vec4(xPos, yPos + height, 0.0, 0.0),
+				glm::vec4(xPos + width, yPos, 1.0, 1.0),
+				glm::vec4(xPos + width, yPos + height, 1.0, 0.0),
+			};
+			glBindTexture(GL_TEXTURE_2D, character.TextureID);
+			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+
+			position.x += (character.Advance >> 6) * size.x;
+		}
 	}
 }
 

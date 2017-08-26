@@ -9,6 +9,10 @@ int main()
 		{
 			e->Run();
 		}
+		else
+		{
+			system("pause");
+		}
 		e->Shutdown();
 		Memory::GetInstance()->Deallocate<Engine>(e);
 		
@@ -16,10 +20,9 @@ int main()
 		Memory::FreeInstance();
 	}
 
-	printf("\n\n\n");
-	system("pause");
-
+#if defined(_DEBUG) || defined(DEBUG)
 	_CrtDumpMemoryLeaks();
+#endif
 
 	return 0;
 }

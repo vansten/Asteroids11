@@ -13,30 +13,31 @@
 
 bool GameplayScene::Initialize(ResourceManager& resourceManager)
 {
-		_camera = NewObject(Camera, glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(glm::half_pi<float>(), 0.0f, 0.0f), CameraSettings(60.0f, 1024.0f, 768.0f, 0.1f, 100.0f));
-		_camera->Initialize(resourceManager);
+	const ScreenSettings& screenSettings = Engine::GetInstance()->GetGraphics().GetScreenSettings();
+	_camera = NewObject(Camera, glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(glm::half_pi<float>(), 0.0f, 0.0f), CameraSettings(60.0f, screenSettings.Width, screenSettings.Height, 0.1f, 100.0f));
+	_camera->Initialize(resourceManager);
 
-		_directionalLight = NewObject(Light);
-		_directionalLight->GetTransform().SetRotation(glm::vec3(glm::pi<float>() * 0.4f, 0.0f, 0.0f));
-		_directionalLight->SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) * 0.8f);
+	_directionalLight = NewObject(Light);
+	_directionalLight->GetTransform().SetRotation(glm::vec3(glm::pi<float>() * 0.4f, 0.0f, 0.0f));
+	_directionalLight->SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) * 0.8f);
 
-		_ambientLight = NewObject(Light);
-		_ambientLight->SetColor(glm::vec4(0.05f, 0.05f, 0.05f, 1.0f));
+	_ambientLight = NewObject(Light);
+	_ambientLight->SetColor(glm::vec4(0.05f, 0.05f, 0.05f, 1.0f));
 
-		Ship* ship = SpawnActor<Ship>();
+	Ship* ship = SpawnActor<Ship>();
 		
-		AsteroidSpawner* spawner = SpawnActor<AsteroidSpawner>();
-		spawner->GetTransform().SetPosition(glm::vec3(0.0f, 0.0f, 5.5f));
+	AsteroidSpawner* spawner = SpawnActor<AsteroidSpawner>();
+	spawner->GetTransform().SetPosition(glm::vec3(0.0f, 0.0f, 5.5f));
 
-		UIActor* textActor = SpawnUIActor<UIActor>(glm::vec2(30.0f, 768.0f - 36.0f));
-		textActor->SetText("Asteroids: ");
-		textActor->SetFontSize(20);
+	UIActor* textActor = SpawnUIActor<UIActor>(glm::vec2(30.0f, screenSettings.Height - 36.0f));
+	textActor->SetText("Asteroids: ");
+	textActor->SetFontSize(20);
 
-		//Create asteroids count text actor
-		textActor = SpawnUIActor<UIActor>(glm::vec2(130.0f, 768.0f - 36.0f));
-		textActor->SetText("0");
-		textActor->SetFontSize(20);
-		spawner->SetAsteroidsCountText(textActor);
+	//Create asteroids count text actor
+	textActor = SpawnUIActor<UIActor>(glm::vec2(130.0f, screenSettings.Height - 36.0f));
+	textActor->SetText("0");
+	textActor->SetFontSize(20);
+	spawner->SetAsteroidsCountText(textActor);
 
-		return true;
+	return true;
 }
